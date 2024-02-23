@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function TabOneScreen(): React.ReactNode {
+export default function HomeScreen(): React.ReactNode {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One!</Text>
