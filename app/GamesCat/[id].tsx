@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View , Text, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 
 import { Game } from '@/types/Rawg-types';
 import { getGames } from '@/utils/getGame';
 
 const RPGGameList: React.FC = () => {
-  const [game, setGame] = useState<Game[] | null>(null);
-
+  const [game, setGame] = useState<Game[] | undefined>(undefined);
   useEffect(() => {
     const fetchGame = async (): Promise<void> => {
       try {

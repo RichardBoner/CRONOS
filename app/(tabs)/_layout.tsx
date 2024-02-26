@@ -8,6 +8,7 @@ const TabLayout: React.FC = () => {
         name="index"
         options={{
           tabBarShowLabel: false,
+          headerShown: false,
           tabBarIcon: () => <Entypo name="home" size={24} color="black" />,
         }}
       />
@@ -15,6 +16,7 @@ const TabLayout: React.FC = () => {
         name="Games"
         options={{
           tabBarShowLabel: false,
+          headerShown: false,
           tabBarIcon: () => <Entypo name="game-controller" size={24} color="black" />,
         }}
       />
@@ -22,6 +24,7 @@ const TabLayout: React.FC = () => {
         name="Calendar"
         options={{
           tabBarShowLabel: false,
+          headerShown: false,
           tabBarIcon: () => <Entypo name="calendar" size={24} color="black" />,
         }}
       />
@@ -29,6 +32,7 @@ const TabLayout: React.FC = () => {
         name="Friends"
         options={{
           tabBarShowLabel: false,
+          headerShown: false,
           tabBarIcon: () => <Entypo name="users" size={24} color="black" />,
         }}
       />
@@ -36,6 +40,7 @@ const TabLayout: React.FC = () => {
         name="Incoming"
         options={{
           tabBarShowLabel: false,
+          headerShown: false,
           tabBarIcon: () => <Entypo name="notification" size={24} color="black" />,
         }}
       />
