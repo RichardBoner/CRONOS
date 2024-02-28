@@ -1,5 +1,6 @@
 import { AntDesign, MaterialCommunityIcons, Fontisto, Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   View,
@@ -59,9 +60,9 @@ export default function HeadGame(): React.ReactNode {
             <MaterialCommunityIcons name="triangle" size={24} color="#8B5CF6" />
           </TouchableWithoutFeedback>
           <View style={{ width: 76, height: 28, flexDirection: 'row', gap: 20 }}>
-            <TouchableWithoutFeedback>
+            <Link href="/Search/GameSearch/">
               <AntDesign name="search1" size={28} color="#fff" />
-            </TouchableWithoutFeedback>
+            </Link>
             <TouchableWithoutFeedback>
               <Fontisto name="bell" size={24} color="#fff" />
             </TouchableWithoutFeedback>
@@ -110,14 +111,14 @@ export default function HeadGame(): React.ReactNode {
             style={{
               backgroundColor: '#8B5CF6',
               height: 32,
-              width: 84,
+              width: 120,
               justifyContent: 'center',
               alignItems: 'center',
               borderRadius: 25,
             }}>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
               <AntDesign name="play" size={16} color="white" />
-              <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>Play</Text>
+              <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>Schedules</Text>
             </View>
           </TouchableHighlight>
 
@@ -133,7 +134,7 @@ export default function HeadGame(): React.ReactNode {
             }}>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
               <Entypo name="add-to-list" size={16} color="white" />
-              <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>My List</Text>
+              <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>Details</Text>
             </View>
           </TouchableHighlight>
         </View>
