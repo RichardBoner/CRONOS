@@ -99,3 +99,9 @@ export type Game = {
     image: string;
   }[];
 };
+export type filter_game = {
+  count: number;
+  next: null;
+  previous: null;
+  results: Game[];
+};

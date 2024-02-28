@@ -1,6 +1,6 @@
 import { fetcher } from './fetcher';
 
-import { Game } from '@/types/Rawg-types';
+import { Game, filter_game } from '@/types/Rawg-types';
 
 export async function getGameById(id: number, slug?: string): Promise<Game | undefined> {
   const apiKey = `cfa3a0eb339e4ec2a4f3b3c5e92289b7`;
@@ -36,7 +36,7 @@ export async function getGames(filters?: string): Promise<Game[] | undefined> {
     throw error;
   }
 }
-export async function getGameWithFilter(filters?: string): Promise<Game | undefined> {
+export async function getGameWithFilter(filters?: string): Promise<filter_game | undefined> {
   const apiKey = `cfa3a0eb339e4ec2a4f3b3c5e92289b7`;
   if (!apiKey) {
     throw new Error('RAWG API key is missing.');
@@ -45,7 +45,7 @@ export async function getGameWithFilter(filters?: string): Promise<Game | undefi
   const url = `https://api.rawg.io/api/games?key=${apiKey}${filters}`;
 
   try {
-    const game = await fetcher<Game>(url);
+    const game = await fetcher<filter_game>(url);
     return game;
   } catch (error) {
     console.error(`Error fetching game with filter ${filters}:`, error);
