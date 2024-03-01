@@ -60,7 +60,7 @@ export default function HeadGame(): React.ReactNode {
             <MaterialCommunityIcons name="triangle" size={24} color="#8B5CF6" />
           </TouchableWithoutFeedback>
           <View style={{ width: 76, height: 28, flexDirection: 'row', gap: 20 }}>
-            <Link href="/Search/GameSearch/">
+            <Link href="(search)">
               <AntDesign name="search1" size={28} color="#fff" />
             </Link>
             <TouchableWithoutFeedback>
