@@ -17,7 +17,7 @@ export async function fetcher<T>(
 
   try {
     const response = await axios(url, axiosOptions);
-    console.warn('request sent to', url);
+    console.log(url);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

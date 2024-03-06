@@ -1,6 +1,14 @@
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Text, TextInput, View, ImageBackground, TouchableHighlight, FlatList } from 'react-native';
+import {
+  Text,
+  TextInput,
+  View,
+  ImageBackground,
+  TouchableHighlight,
+  FlatList,
+  StatusBar,
+} from 'react-native';
 
 import { Game, filter_game } from '@/types/Rawg-types';
 import { getGameWithFilter } from '@/utils/getGame';
@@ -8,18 +16,28 @@ import { getGameWithFilter } from '@/utils/getGame';
 export default function SearchScreen(): React.ReactNode {
   const [game, setGame] = useState<Game[] | undefined>(undefined);
   const [inputValue, setInputValue] = useState('');
+  const [gameName, setGameName] = useState('');
+  const [gameData, setGameData] = useState<filter_game>();
+  const [genre, setGenre] = useState<string>('');
   const [searchParam, setSearchParam] = useState<string[]>(['']);
 
   useEffect(() => {
     const fetchGame = async (): Promise<void> => {
       try {
-        const gameData: filter_game | undefined = await getGameWithFilter(
-          `&search_precise=true&tags=${searchParam}&genres=${searchParam}&ordering=-rating`,
-        ); // Fetch game with ID 1
+        setGenre(arrayToString(searchParam));
+        if (searchParam.length === 0 || (searchParam.length === 1 && searchParam[0] === '')) {
+          const tempGameData: filter_game | undefined = await getGameWithFilter(
+            `&search_precise=true&ordering=-rating&search={name=${gameName}}`,
+          );
+          setGameData(tempGameData);
+        } else {
+          const tempGameData: filter_game | undefined = await getGameWithFilter(
+            `&search_precise=true&genres=${genre}&ordering=-rating&search={name=${gameName}}`,
+          );
+          setGameData(tempGameData);
+        }
         if (gameData !== undefined) {
           setGame(gameData.results);
-        } else {
-          console.error('fetch failed');
         }
       } catch (error) {
         console.error('Error fetching game:', error);
@@ -30,19 +48,19 @@ export default function SearchScreen(): React.ReactNode {
     return () => {
       // Any cleanup code
     };
-  }, [searchParam]);
+  }, [searchParam, gameName]);
+  const arrayToString = (arr: string[]): string => {
+    return arr.join(',');
+  };
   const handleAddWord = (): void => {
-    if (inputValue.trim() !== '') {
-      const lowercaseWord = inputValue.toLowerCase();
-      setSearchParam([...searchParam, lowercaseWord.trim()]);
-      console.log(searchParam);
-      setInputValue('');
-    }
+    setSearchParam((searchParam) => [...searchParam, inputValue]);
+    setInputValue('');
   };
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
       <View style={{ flex: 1 }}>
         <Text>fweijgw</Text>
+        <TextInput onChangeText={setGameName} value={gameName} placeholder="Search" />
         <TextInput onChangeText={setInputValue} value={inputValue} placeholder="Search" />
         <TouchableHighlight onPress={handleAddWord}>
           <Text>Add Tag</Text>
@@ -53,7 +71,7 @@ export default function SearchScreen(): React.ReactNode {
           ))}
         </View>
         <FlatList
-          horizontal={false}
+          horizontal
           style={{ flex: 1 }}
           data={game}
           renderItem={({ item }) => (

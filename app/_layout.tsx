@@ -7,11 +7,11 @@ export const unstable_settings = {
 
 const RootLayoutNav: React.FC = () => {
   return (
-    <Stack>
+    <Stack initialRouteName="(tabs)">
       <Stack.Screen name="GamesCat/[id]" />
       <Stack.Screen name="Game/[id]" />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(search)" />
+      <Stack.Screen name="(search)" options={{ headerShown: false }} />
     </Stack>
   );
 };
