@@ -1,3 +1,4 @@
+import { AntDesign } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -8,6 +9,7 @@ import {
   TouchableHighlight,
   FlatList,
   StatusBar,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import { Game, filter_game } from '@/types/Rawg-types';
@@ -19,7 +21,7 @@ export default function SearchScreen(): React.ReactNode {
   const [gameName, setGameName] = useState('');
   const [gameData, setGameData] = useState<filter_game>();
   const [genre, setGenre] = useState<string>('');
-  const [searchParam, setSearchParam] = useState<string[]>(['']);
+  const [searchParam, setSearchParam] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchGame = async (): Promise<void> => {
@@ -53,22 +55,65 @@ export default function SearchScreen(): React.ReactNode {
     return arr.join(',');
   };
   const handleAddWord = (): void => {
-    setSearchParam((searchParam) => [...searchParam, inputValue]);
-    setInputValue('');
+    if (inputValue !== '') {
+      setSearchParam((searchParam) => [...searchParam, inputValue]);
+      setInputValue('');
+    }
+  };
+  const handleItemRemoval = (value: string): void => {
+    setSearchParam(searchParam.filter((item) => item !== value));
   };
   return (
     <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
       <View style={{ flex: 1 }}>
         <Text>fweijgw</Text>
-        <TextInput onChangeText={setGameName} value={gameName} placeholder="Search" />
-        <TextInput onChangeText={setInputValue} value={inputValue} placeholder="Search" />
-        <TouchableHighlight onPress={handleAddWord}>
-          <Text>Add Tag</Text>
-        </TouchableHighlight>
+        <TextInput
+          onChangeText={setGameName}
+          value={gameName}
+          placeholder="Game Name"
+          style={{ height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 8 }}
+        />
+        <View style={{ flexDirection: 'row' }}>
+          <TextInput
+            onChangeText={setInputValue}
+            value={inputValue}
+            placeholder="Tags..."
+            style={{
+              height: 40,
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 5,
+              flex: 1,
+              padding: 8,
+            }}
+          />
+          <TouchableHighlight onPress={handleAddWord}>
+            <View style={{ height: 40, width: 40, justifyContent: 'center', alignItems: 'center' }}>
+              <AntDesign name="pluscircleo" size={24} color="black" />
+            </View>
+          </TouchableHighlight>
+        </View>
         <View>
-          {searchParam.map((word, index) => (
-            <Text key={index}>{word}</Text>
-          ))}
+          <FlatList
+            horizontal
+            style={{ height: 100, width: '100%' }}
+            data={searchParam}
+            renderItem={({ item }) => (
+              <TouchableWithoutFeedback onPress={() => handleItemRemoval(item)}>
+                <View
+                  style={{
+                    width: 80,
+                    height: 30,
+                    borderWidth: 2,
+                    borderRadius: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Text>{item}</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            )}
+          />
         </View>
         <FlatList
           horizontal
