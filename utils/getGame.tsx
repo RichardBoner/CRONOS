@@ -36,6 +36,7 @@ export async function getGames(filters?: string): Promise<Game[] | undefined> {
     throw error;
   }
 }
+
 export async function getGameWithFilter(filters?: string): Promise<filter_game | undefined> {
   const apiKey = `cfa3a0eb339e4ec2a4f3b3c5e92289b7`;
   if (!apiKey) {

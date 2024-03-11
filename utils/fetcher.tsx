@@ -17,6 +17,7 @@ export async function fetcher<T>(
 
   try {
     const response = await axios(url, axiosOptions);
+    console.log(url);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -27,6 +28,7 @@ export async function fetcher<T>(
       //   throw new Error(`Error ${error.response.status}: ${error.response.statusText}`);
       // }
       console.error('FETCH ERROR:', error);
+      console.error('request sent to', url);
     } else {
       // Non-Axios error
       throw new Error('Non-Axios error occurred');
