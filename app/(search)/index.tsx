@@ -24,33 +24,32 @@ export default function SearchScreen(): React.ReactNode {
   const [searchParam, setSearchParam] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchGame = async (): Promise<void> => {
-      try {
-        setGenre(arrayToString(searchParam));
-        if (searchParam.length === 0 || (searchParam.length === 1 && searchParam[0] === '')) {
-          const tempGameData: filter_game | undefined = await getGameWithFilter(
-            `&search_precise=true&ordering=-rating&search={name=${gameName}}`,
-          );
-          setGameData(tempGameData);
-        } else {
-          const tempGameData: filter_game | undefined = await getGameWithFilter(
-            `&search_precise=true&genres=${genre}&ordering=-rating&search={name=${gameName}}`,
-          );
-          setGameData(tempGameData);
-        }
-        if (gameData !== undefined) {
-          setGame(gameData.results);
-        }
-      } catch (error) {
-        console.error('Error fetching game:', error);
-      }
-    };
-
     fetchGame();
     return () => {
       // Any cleanup code
     };
-  }, [searchParam, gameName]);
+  }, []);
+  const fetchGame = async (): Promise<void> => {
+    try {
+      setGenre(arrayToString(searchParam));
+      if (searchParam.length === 0 || (searchParam.length === 1 && searchParam[0] === '')) {
+        const tempGameData: filter_game | undefined = await getGameWithFilter(
+          `&search_precise=true&ordering=-rating&search={name=${gameName}}`,
+        );
+        setGameData(tempGameData);
+      } else {
+        const tempGameData: filter_game | undefined = await getGameWithFilter(
+          `&genres=${genre}&tags=${genre}&ordering=-rating&search={name=${gameName}}`,
+        );
+        setGameData(tempGameData);
+      }
+      if (gameData !== undefined) {
+        setGame(gameData.results);
+      }
+    } catch (error) {
+      console.error('Error fetching game:', error);
+    }
+  };
   const arrayToString = (arr: string[]): string => {
     return arr.join(',');
   };
@@ -59,20 +58,38 @@ export default function SearchScreen(): React.ReactNode {
       setSearchParam((searchParam) => [...searchParam, inputValue]);
       setInputValue('');
     }
+    fetchGame();
   };
   const handleItemRemoval = (value: string): void => {
     setSearchParam(searchParam.filter((item) => item !== value));
   };
+  const handleSearch = (): void => {
+    fetchGame();
+  };
   return (
-    <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
+    <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, backgroundColor: '#3A3C42' }}>
       <View style={{ flex: 1 }}>
         <Text>fweijgw</Text>
-        <TextInput
-          onChangeText={setGameName}
-          value={gameName}
-          placeholder="Game Name"
-          style={{ height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 8 }}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <TextInput
+            onChangeText={setGameName}
+            value={gameName}
+            placeholder="Tags..."
+            style={{
+              height: 40,
+              borderWidth: 1,
+              borderColor: '#9BA8A8',
+              borderRadius: 5,
+              flex: 1,
+              padding: 8,
+            }}
+          />
+          <TouchableHighlight onPress={handleSearch}>
+            <View style={{ height: 40, width: 40, justifyContent: 'center', alignItems: 'center' }}>
+              <AntDesign name="pluscircleo" size={24} color="black" />
+            </View>
+          </TouchableHighlight>
+        </View>
         <View style={{ flexDirection: 'row' }}>
           <TextInput
             onChangeText={setInputValue}
@@ -81,7 +98,7 @@ export default function SearchScreen(): React.ReactNode {
             style={{
               height: 40,
               borderWidth: 1,
-              borderColor: '#ccc',
+              borderColor: '#9BA8A8',
               borderRadius: 5,
               flex: 1,
               padding: 8,
@@ -116,27 +133,27 @@ export default function SearchScreen(): React.ReactNode {
           />
         </View>
         <FlatList
-          horizontal
-          style={{ flex: 1 }}
+          style={{ flex: 1, gap: 4 }}
           data={game}
           renderItem={({ item }) => (
-            <Link href={`/Game/${item.id}`} style={{ height: '100%', marginHorizontal: 4 }}>
+            <Link
+              href={`/Game/${item.id}`}
+              style={{ height: 60, marginHorizontal: 4, backgroundColor: '#333333' }}>
               <ImageBackground
                 source={{ uri: `${item.background_image}` }}
-                imageStyle={{ borderRadius: 12 }}
                 resizeMethod="resize"
-                style={{ width: 150, height: 70, padding: 5, borderRadius: 12 }}>
-                <View
-                  style={{
-                    width: 34,
-                    height: 24,
-                    backgroundColor: '#06C149',
-                    borderRadius: 6,
-                    alignItems: 'center',
-                  }}>
-                  <Text>{item.rating}</Text>
-                </View>
-              </ImageBackground>
+                style={{ width: 150, height: 60 }}
+              />
+              <View
+                style={{
+                  width: 34,
+                  height: 24,
+                  backgroundColor: '#06C149',
+                  borderRadius: 6,
+                  alignItems: 'center',
+                }}>
+                <Text>{item.rating}</Text>
+              </View>
             </Link>
           )}
         />
