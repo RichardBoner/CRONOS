@@ -69,7 +69,7 @@ export default function SearchScreen(): React.ReactNode {
   return (
     <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, backgroundColor: '#3A3C42' }}>
       <View style={{ flex: 1 }}>
-        <Text>fweijgw</Text>
+        <Link href="/(tabs)" />
         <View style={{ flexDirection: 'row' }}>
           <TextInput
             onChangeText={setGameName}

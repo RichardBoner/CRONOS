@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 
 const TabLayout: React.FC = () => {
   return (
-    <Tabs>
+    <Tabs initialRouteName="/index">
       <Tabs.Screen
         name="index"
         options={{
