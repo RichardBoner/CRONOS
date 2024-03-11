@@ -1,4 +1,4 @@
-import { ClerkProvider } from "@clerk/clerk-expo";
+import { ClerkProvider } from '@clerk/clerk-expo';
 import { Stack } from 'expo-router';
 
 export const unstable_settings = {
@@ -9,12 +9,12 @@ export const unstable_settings = {
 const RootLayoutNav: React.FC = () => {
   return (
     <ClerkProvider publishableKey="">
-    <Stack initialRouteName="(tabs)">
-      <Stack.Screen name="GamesCat/[id]" />
-      <Stack.Screen name="Game/[id]" />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(search)" options={{ headerShown: false }} />
-    </Stack>
+      <Stack initialRouteName="(tabs)">
+        <Stack.Screen name="GamesCat/[id]" />
+        <Stack.Screen name="Game/[id]" />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(search)" options={{ headerShown: false }} />
+      </Stack>
     </ClerkProvider>
   );
 };
