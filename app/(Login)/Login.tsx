@@ -3,6 +3,8 @@ import { Link } from 'expo-router';
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { useLoginContext } from '@/hooks/ZustandStore';
+
 // import { useLoginContext } from '@/hooks/ZustandStore';
 
 export default function SignInScreen(): React.ReactNode {
@@ -10,9 +12,13 @@ export default function SignInScreen(): React.ReactNode {
 
   const [emailAddress, setEmailAddress] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const UnLog = useLoginContext((state) => state.setUnLogged);
   // function setLogin(): void {
   //   const unLog = useLoginContext((state) => state.setLogged);
   // }
+  const ToggleUnlog = (): void => {
+    UnLog();
+  };
   const onSignInPress = async (): Promise<void> => {
     if (!isLoaded) {
       return;
@@ -25,8 +31,9 @@ export default function SignInScreen(): React.ReactNode {
       });
       // This is an important step,
       // This indicates the user is signed in
+      ToggleUnlog();
       await setActive({ session: completeSignIn.createdSessionId });
-      setLogin();
+      // setLogin();
     } catch (err) {
       console.log(err);
     }

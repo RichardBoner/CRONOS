@@ -19,6 +19,8 @@ const RootLayoutNav: React.FC = () => {
         <Stack initialRouteName="(tabs)">
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(search)" options={{ headerShown: false }} />
+          <Stack.Screen name="Game/GamesCat/[id]" />
+          <Stack.Screen name="Game/[id]" />
         </Stack>
       </SignedIn>
     </ClerkProvider>

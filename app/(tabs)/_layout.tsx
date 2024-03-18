@@ -1,13 +1,13 @@
 import { Entypo } from '@expo/vector-icons';
-import { Tabs, Redirect } from 'expo-router';
+import { Tabs } from 'expo-router';
 
-import { useLoginContext } from '@/hooks/ZustandStore';
+// import { useLoginContext } from '@/hooks/ZustandStore';
 
 const TabLayout: React.FC = () => {
-  const LogContext: boolean = useLoginContext((state) => state.LoggedIn);
-  if (LogContext === false) {
-    return <Redirect href="/(Login)/Login" />;
-  }
+  // const LogContext: boolean = useLoginContext((state) => state.LoggedIn);
+  // if (LogContext === false) {
+  //   return <Redirect href="/(Login)/Login" />;
+  // }
   return (
     <Tabs>
       <Tabs.Screen
