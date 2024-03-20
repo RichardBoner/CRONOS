@@ -1,24 +1,36 @@
 import { useSignIn } from '@clerk/clerk-expo';
-import { Link } from 'expo-router';
+import { Link, Redirect } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { useLoginContext } from '@/hooks/ZustandStore';
+import { useWarmUpBrowser } from '@/hooks/UseWarmUpBrowser';
 
-// import { useLoginContext } from '@/hooks/ZustandStore';
+WebBrowser.maybeCompleteAuthSession();
 
 export default function SignInScreen(): React.ReactNode {
   const { signIn, setActive, isLoaded } = useSignIn();
-
   const [emailAddress, setEmailAddress] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const UnLog = useLoginContext((state) => state.setUnLogged);
-  // function setLogin(): void {
-  //   const unLog = useLoginContext((state) => state.setLogged);
-  // }
-  const ToggleUnlog = (): void => {
-    UnLog();
-  };
+  // const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
+
+  useWarmUpBrowser();
+
+  // const onPressGoogle = React.useCallback(async () => {
+  //   try {
+  //     const { createdSessionId, setActive } = await startOAuthFlow();
+
+  //     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  //     if (createdSessionId) {
+  //       setActive({ session: createdSessionId });
+  //     } else {
+  //       // Use signIn or signUp for next steps such as MFA
+  //     }
+  //   } catch (err) {
+  //     console.error('OAuth error', err);
+  //   }
+  // }, []);
+  //intigrate google close to release
   const onSignInPress = async (): Promise<void> => {
     if (!isLoaded) {
       return;
@@ -31,7 +43,6 @@ export default function SignInScreen(): React.ReactNode {
       });
       // This is an important step,
       // This indicates the user is signed in
-      ToggleUnlog();
       await setActive({ session: completeSignIn.createdSessionId });
       // setLogin();
     } catch (err) {
@@ -41,6 +52,7 @@ export default function SignInScreen(): React.ReactNode {
   const handleSignInPress = (): void => {
     onSignInPress();
   };
+  if (isLoaded || userId !== null) return <Redirect href="/(tabs)" />;
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <View style={{ width: 300, gap: 10 }}>
