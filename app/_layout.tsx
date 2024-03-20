@@ -1,18 +1,29 @@
+import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
+import { dark } from '@clerk/themes';
 import { Stack } from 'expo-router';
 
 export const unstable_settings = {
-  // Ensure any route can link back to `/`
-  initialRouteName: '(tabs)',
+  initialRouteName: '/(Login)',
 };
 
 const RootLayoutNav: React.FC = () => {
+  const publishableKey = 'pk_test_d29uZHJvdXMtZ29waGVyLTQyLmNsZXJrLmFjY291bnRzLmRldiQ';
   return (
-    <Stack initialRouteName="(tabs)">
-      <Stack.Screen name="GamesCat/[id]" />
-      <Stack.Screen name="Game/[id]" />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(search)" options={{ headerShown: false }} />
-    </Stack>
+    <ClerkProvider publishableKey={publishableKey} appearance={{ baseTheme: dark }}>
+      <SignedOut>
+        <Stack>
+          <Stack.Screen name="(Login)" />
+        </Stack>
+      </SignedOut>
+      <SignedIn>
+        <Stack initialRouteName="(tabs)">
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(search)" options={{ headerShown: false }} />
+          <Stack.Screen name="Game/GamesCat/[id]" />
+          <Stack.Screen name="Game/[id]" />
+        </Stack>
+      </SignedIn>
+    </ClerkProvider>
   );
 };
 
