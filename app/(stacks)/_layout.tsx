@@ -9,7 +9,9 @@ export default function CalendarScreen(): React.ReactNode {
   }
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="Search/index" options={{ headerShown: false }} />
+      <Stack.Screen name="CreateSchedule/index" options={{ headerShown: false }} />
+      <Stack.Screen name="Game/[id]" options={{ headerShown: false }} />
     </Stack>
   );
 }

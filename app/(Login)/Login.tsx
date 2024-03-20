@@ -91,6 +91,13 @@ export default function SignInScreen(): React.ReactNode {
           }}>
           Sign Up?
         </Link>
+        <Link
+          href="/(tabs)"
+          style={{
+            height: 50,
+          }}>
+          Remove in prod
+        </Link>
       </View>
     </View>
   );
