@@ -5,6 +5,7 @@ import { Calendar } from 'react-native-calendars';
 
 export default function CalendarScreen(): React.ReactNode {
   const [selected, setSelected] = useState('');
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Calendar
@@ -21,7 +22,7 @@ export default function CalendarScreen(): React.ReactNode {
           [selected]: { selected: true, disableTouchEvent: true },
         }}
       />
-      <Link href="/(stacks)/CreateSchedule">CreateSchedule?</Link>
+      <Link href="/(stacks)/CreateSchedule/[id]">CreateSchedule?</Link>
     </View>
   );
 }

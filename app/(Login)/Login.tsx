@@ -1,7 +1,7 @@
 import { useSignIn } from '@clerk/clerk-expo';
 import { Link, Redirect } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useWarmUpBrowser } from '@/hooks/UseWarmUpBrowser';
@@ -31,7 +31,7 @@ export default function SignInScreen(): React.ReactNode {
   //   }
   // }, []);
   //intigrate google close to release
-  const onSignInPress = async (): Promise<void> => {
+  const onSignInPress = async (): Promise<void | ReactElement> => {
     if (!isLoaded) {
       return;
     }
@@ -44,6 +44,7 @@ export default function SignInScreen(): React.ReactNode {
       // This is an important step,
       // This indicates the user is signed in
       await setActive({ session: completeSignIn.createdSessionId });
+      return <Redirect href="/(tabs)" />;
       // setLogin();
     } catch (err) {
       console.log(err);
@@ -52,7 +53,6 @@ export default function SignInScreen(): React.ReactNode {
   const handleSignInPress = (): void => {
     onSignInPress();
   };
-  if (isLoaded || userId !== null) return <Redirect href="/(tabs)" />;
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <View style={{ width: 300, gap: 10 }}>

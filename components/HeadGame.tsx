@@ -11,16 +11,18 @@ import {
 } from 'react-native';
 
 import { Game, filter_game } from '@/types/Rawg-types';
+import { presentDate } from '@/utils/FormattedDate';
 import { getGameWithFilter } from '@/utils/getGame';
 
 export default function HeadGame(): React.ReactNode {
   const [game, setGame] = useState<Game | undefined>(undefined);
 
   useEffect(() => {
+    const myDate = presentDate(); // or any other Date object
     const fetchGame = async (): Promise<void> => {
       try {
         const gameData: filter_game | undefined = await getGameWithFilter(
-          `&ordering=-rating&search_precise=true&dates=2013-09-17,2024-02-23`,
+          `&ordering=-metacritic&search_precise=true&dates=2013-09-17,${myDate}`,
         ); // Fetch game with ID 1
         if (gameData !== undefined) {
           const firtsResult = gameData?.results[0];

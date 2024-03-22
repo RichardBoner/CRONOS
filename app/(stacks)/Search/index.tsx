@@ -137,7 +137,7 @@ export default function SearchScreen(): React.ReactNode {
           data={game}
           renderItem={({ item }) => (
             <Link
-              href={`/Game/${item.id}`}
+              href={`/(stacks)/CreateSchedule/${item.id}`}
               style={{ height: 60, marginHorizontal: 4, backgroundColor: '#333333' }}>
               <ImageBackground
                 source={{ uri: `${item.background_image}` }}
