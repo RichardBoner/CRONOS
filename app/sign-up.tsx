@@ -1,6 +1,6 @@
 import { useSignUp } from '@clerk/clerk-expo';
-import { Link } from 'expo-router';
-import * as React from 'react';
+import { Link, router } from 'expo-router';
+import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function SignUpScreen(): React.ReactNode {
@@ -24,12 +24,9 @@ export default function SignUpScreen(): React.ReactNode {
         emailAddress,
         password,
       });
-
-      // send the email.
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-
-      // change the UI to our pending section.
       setPendingVerification(true);
+      router.push('/sign-in');
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
@@ -40,8 +37,6 @@ export default function SignUpScreen(): React.ReactNode {
   const handleSignUp = (): void => {
     onSignUpPress();
   };
-
-  // This verifies the user using email code that is delivered.
   const onPressVerify = async (): Promise<void> => {
     if (!isLoaded) {
       return;
@@ -104,7 +99,7 @@ export default function SignUpScreen(): React.ReactNode {
               <Text style={{ color: '#fff', fontWeight: 'bold' }}>Sign up</Text>
             </TouchableOpacity>
           </View>
-          <Link href="/(Login)/Login">Login?</Link>
+          <Link href="/sign-in">Login?</Link>
         </View>
       )}
       {pendingVerification && (

@@ -69,7 +69,7 @@ export default function SearchScreen(): React.ReactNode {
   return (
     <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, backgroundColor: '#3A3C42' }}>
       <View style={{ flex: 1 }}>
-        <Link href="/(tabs)">Home remove in prod</Link>
+        <Link href="/(app)/(tabs)">Home remove in prod</Link>
         <View style={{ flexDirection: 'row' }}>
           <TextInput
             onChangeText={setGameName}
@@ -137,7 +137,7 @@ export default function SearchScreen(): React.ReactNode {
           data={game}
           renderItem={({ item }) => (
             <Link
-              href={`/(stacks)/CreateSchedule/${item.id}`}
+              href={`/(app)/(stacks)/CreateSchedule/${item.id}`}
               style={{ height: 60, marginHorizontal: 4, backgroundColor: '#333333' }}>
               <ImageBackground
                 source={{ uri: `${item.background_image}` }}

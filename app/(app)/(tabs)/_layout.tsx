@@ -1,14 +1,9 @@
-import { useAuth } from '@clerk/clerk-expo';
 import { Entypo } from '@expo/vector-icons';
-import { Redirect, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 
 // import { useLoginContext } from '@/hooks/ZustandStore';
 
 const TabLayout: React.FC = () => {
-  const { isLoaded, userId } = useAuth();
-  if (!isLoaded || userId == null) {
-    return <Redirect href="/(Login)/Login" />;
-  }
   return (
     <Tabs>
       <Tabs.Screen

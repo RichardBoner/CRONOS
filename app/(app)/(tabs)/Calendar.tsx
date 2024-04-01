@@ -22,7 +22,7 @@ export default function CalendarScreen(): React.ReactNode {
           [selected]: { selected: true, disableTouchEvent: true },
         }}
       />
-      <Link href="/(stacks)/CreateSchedule/[id]">CreateSchedule?</Link>
+      <Link href="./(stacks)/CreateSchedule">CreateSchedule?</Link>
     </View>
   );
 }
