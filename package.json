@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "commit": "cz",
     "commit-all": "git add . && cz",
-    "prepare": "husky"
+    "prepare": "husky",
+    "codegen": "bunx graphql-code-generator --config ./app/graphql/codegen.ts"
   },
   "jest": {
     "preset": "jest-expo"
@@ -21,6 +22,8 @@
     "@clerk/clerk-expo": "^0.20.9",
     "@clerk/themes": "^1.7.10",
     "@expo/vector-icons": "^14.0.0",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.0",
+    "@graphql-codegen/typescript-resolvers": "^4.0.6",
     "@react-native-community/datetimepicker": "7.6.1",
     "@react-navigation/native": "^6.0.2",
     "axios": "^1.6.7",
@@ -44,6 +47,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@graphql-codegen/cli": "^5.0.2",
     "@types/react": "~18.2.45",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
@@ -55,7 +59,7 @@
     "jest-expo": "^50.0.3",
     "prettier": "^3.2.5",
     "react-test-renderer": "18.2.0",
-    "typescript": "^5.1.3"
+    "typescript": "^5.4.3"
   },
   "eslintConfig": {
     "extends": "universe/native"
