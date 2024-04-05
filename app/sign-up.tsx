@@ -1,4 +1,6 @@
 import { useSignUp } from '@clerk/clerk-expo';
+import JWT from 'expo-jwt';
+import { SupportedAlgorithms } from 'expo-jwt/dist/types/algorithms';
 import { Link, router } from 'expo-router';
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -12,7 +14,25 @@ export default function SignUpScreen(): React.ReactNode {
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState('');
 
-  // start the sign up process.
+  const key = 'AYEqnQcyGSM4';
+  interface UserPayload {
+    id: string;
+    name: string;
+    password: string;
+    createdAt: string;
+  }
+
+  const generateJWT = (userPayload: UserPayload): string => {
+    return JWT.encode(userPayload, key, SupportedAlgorithms.HS256);
+  };
+  const userPayload: UserPayload = {
+    id: 'user_2dil6ujpJVWxRzJ9CLxHREKDJgE',
+    name: 'richardBonerExample',
+    password: 'examplePassword',
+    createdAt: '2022-04-05',
+  };
+  const jwt = generateJWT(userPayload);
+  console.log(jwt);
   const onSignUpPress = async (): Promise<void> => {
     if (!isLoaded) {
       return;
