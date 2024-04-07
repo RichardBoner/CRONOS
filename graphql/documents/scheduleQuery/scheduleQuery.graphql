@@ -1,0 +1,20 @@
+query getScheduleById($getScheduleByIdId: ID!) {
+  getScheduleById(id: $getScheduleByIdId) {
+    creatorUserId
+    date
+    duration
+    gameId
+    id
+    users
+  }
+}
+mutation CreateSchedule($input: createScheduleInput!) {
+  createSchedule(input: $input) {
+    creatorUserId
+    date
+    gameId
+    id
+    duration
+    users
+  }
+}

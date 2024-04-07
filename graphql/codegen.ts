@@ -1,10 +1,11 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
+import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: process.env.GQL_SCHEMA_ENDPOINT,
-  documents: ['./app/graphql/documents/query.graphql'],
+  overwrite: true,
+  schema: 'http://localhost:3000/api/graphql',
+  documents: './graphql/documents/**/*',
   generates: {
-    './app/graphql/generated/index.ts': {
+    './graphql/generated/index.ts': {
       overwrite: true,
       plugins: [
         'typescript',
@@ -12,9 +13,6 @@ const config: CodegenConfig = {
         'typescript-operations',
         'typescript-react-apollo',
       ],
-      config: {
-        withHooks: true,
-      },
     },
   },
 };

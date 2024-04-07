@@ -1,0 +1,37 @@
+mutation Mutation($input: UserRegisterInput!) {
+  registerUser(input: $input)
+}
+
+query GetUser($getUserId: ID!) {
+  getUser(id: $getUserId) {
+    id
+    name
+    createdAt
+    friends
+    schedules
+  }
+}
+
+query getUsersByScheduleId($getUsersByScheduleId: ID!) {
+  getUsersBySchedule(id: $getUsersByScheduleId) {
+    id
+    name
+    createdAt
+    friends
+    schedules
+  }
+}
+
+mutation Login($loginId: String!, $password: String!) {
+  login(id: $loginId, password: $password)
+}
+
+mutation UpdateUser($input: UserUpdateInput) {
+  updateUser(input: $input) {
+    createdAt
+    friends
+    id
+    name
+    schedules
+  }
+}

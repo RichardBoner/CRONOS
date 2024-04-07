@@ -7,10 +7,9 @@ import {
   Text,
   TouchableWithoutFeedback,
   TouchableHighlight,
-  ActivityIndicator,
 } from 'react-native';
 
-import { useGetGamesQuery } from '@/app/graphql/generated';
+import { useGetGamesQuery } from '@/graphql/generated';
 
 export default function HeadGame(): React.ReactNode {
   const { loading, error, data } = useGetGamesQuery({
@@ -18,8 +17,13 @@ export default function HeadGame(): React.ReactNode {
       query: '&ordering=-metacritic&search_precise=true',
     },
   });
-  if (loading) return <ActivityIndicator />;
   if (error) return <Text>Error: {error.message}</Text>;
+  if (loading)
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
   if (Array.isArray(data?.getGames)) {
     const games = data?.getGames[0];
 
@@ -127,6 +131,10 @@ export default function HeadGame(): React.ReactNode {
       </ImageBackground>
     );
   } else {
-    return <Text>Backend Error</Text>;
+    return (
+      <View>
+        <Text>CRITICAL ERROR</Text>
+      </View>
+    );
   }
 }
