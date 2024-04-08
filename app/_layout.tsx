@@ -6,7 +6,7 @@ import { KeyboardAvoidingView } from 'react-native';
 const RootLayoutNav: React.FC = () => {
   const clerkKey = String(process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const client = new ApolloClient({
-    uri: 'http://localhost:192.168.56.1:3000/api/graphql',
+    uri: 'http://192.168.11.54:3000/api/graphql',
     cache: new InMemoryCache(),
   });
   if (!clerkKey) {

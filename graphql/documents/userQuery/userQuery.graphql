@@ -1,5 +1,11 @@
-mutation Mutation($input: UserRegisterInput!) {
-  registerUser(input: $input)
+mutation registerUser($input: UserRegisterInput!) {
+  registerUser(input: $input) {
+    createdAt
+    friends
+    id
+    name
+    schedules
+  }
 }
 
 query GetUser($getUserId: ID!) {
