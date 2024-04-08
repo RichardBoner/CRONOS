@@ -12,7 +12,7 @@
     "commit": "cz",
     "commit-all": "git add . && cz",
     "prepare": "husky",
-    "codegen": "bunx graphql-code-generator --config ./app/graphql/codegen.ts"
+    "codegen": "graphql-codegen --config graphql/codegen.ts"
   },
   "jest": {
     "preset": "jest-expo"
@@ -49,8 +49,8 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@graphql-codegen/cli": "^5.0.2",
+    "@babel/core": "^7.24.4",
+    "@graphql-codegen/cli": "5.0.2",
     "@types/react": "~18.2.45",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
@@ -62,7 +62,9 @@
     "jest-expo": "^50.0.3",
     "prettier": "^3.2.5",
     "react-test-renderer": "18.2.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.3",
+    "@graphql-codegen/introspection": "4.0.3",
+    "@graphql-codegen/client-preset": "4.2.5"
   },
   "browser": {
     "crypto": false,

@@ -7,6 +7,12 @@ module.exports = {
         project: './tsconfig.json',
       },
       rules: {
+        'prettier/prettier': [
+          'error',
+          {
+            endOfLine: 'auto',
+          },
+        ],
         '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/no-unused-vars': 'error',
         '@typescript-eslint/explicit-function-return-type': [
