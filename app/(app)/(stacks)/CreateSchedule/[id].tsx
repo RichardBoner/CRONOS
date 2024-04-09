@@ -1,23 +1,25 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useGlobalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { TouchableWithoutFeedback, View, Text } from 'react-native';
 
-// import { ScheduleType } from '@/types/SchemaTypes';
-// import { presentDate } from '@/utils/FormattedDate';
-
 export default function CreateScheduleScreen(): React.ReactNode {
   const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState();
+  const [mode, setMode] = useState<string>('');
   const [show, setShow] = useState(false);
-  // const [schedule, setSchedule] = useState<ScheduleType>();
+  const [primaryDate, setPrimaryDate] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // const [primaryDate, setPrimaryDate] = useState<any>(presentDate());
-
+  const { id } = useGlobalSearchParams();
   const onChange = (event, selectedDate): void => {
     const currentDate: Date = selectedDate;
     setShow(false);
     setDate(currentDate);
-    // setPrimaryDate(currentDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate: string = `${year}-${month}-${day}`;
+    setPrimaryDate(formattedDate);
+    console.log(primaryDate);
     console.log(currentDate);
   };
 
@@ -44,10 +46,9 @@ export default function CreateScheduleScreen(): React.ReactNode {
           onChange={onChange}
         />
       )}
+      <Text>{date}</Text>
+      <Text>{id}</Text>
       <TouchableWithoutFeedback onPress={showDatepicker}>
-        <Text>Select Time</Text>
-      </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={showTimepicker}>
         <Text>Select Time</Text>
       </TouchableWithoutFeedback>
       <TouchableWithoutFeedback onPress={showTimepicker}>

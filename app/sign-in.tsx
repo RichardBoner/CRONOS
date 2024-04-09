@@ -7,6 +7,7 @@ export default function SignInScreen(): React.ReactNode {
   const { signIn, setActive, isLoaded } = useSignIn();
   const [emailAddress, setEmailAddress] = React.useState('');
   const [password, setPassword] = React.useState('');
+
   const onSignInPress = async (): Promise<void> => {
     if (!isLoaded) {
       return;

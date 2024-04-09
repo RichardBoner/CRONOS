@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider, InMemoryCache, HttpLink } from '@apollo/client';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import { Slot } from 'expo-router';
 import { KeyboardAvoidingView } from 'react-native';
@@ -6,7 +6,9 @@ import { KeyboardAvoidingView } from 'react-native';
 const RootLayoutNav: React.FC = () => {
   const clerkKey = String(process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const client = new ApolloClient({
-    uri: 'http://192.168.11.54:3000/api/graphql',
+    link: new HttpLink({
+      uri: '',
+    }),
     cache: new InMemoryCache(),
   });
   if (!clerkKey) {

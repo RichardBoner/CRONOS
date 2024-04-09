@@ -1,9 +1,10 @@
-mutation registerUser($input: UserRegisterInput!) {
+mutation RegisterUser($input: UserRegisterInput!) {
   registerUser(input: $input) {
+    id
+    email
+    name
     createdAt
     friends
-    id
-    name
     schedules
   }
 }

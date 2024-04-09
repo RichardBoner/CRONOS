@@ -1,4 +1,4 @@
-query GetGames($query: String!) {
+query getGames($query: String) {
   getGames(query: $query) {
     id
     name
@@ -8,15 +8,19 @@ query GetGames($query: String!) {
     background_image
     rating
     rating_top
+    ratings_count
+    reviews_text_count
+    added
+    metacritic
+    playtime
+    suggestions_count
+    updated
     ratings {
       id
       title
       count
       percent
     }
-    ratings_count
-    reviews_text_count
-    added
     added_by_status {
       yet
       owned
@@ -25,10 +29,6 @@ query GetGames($query: String!) {
       dropped
       playing
     }
-    metacritic
-    playtime
-    suggestions_count
-    updated
     esrb_rating {
       id
       name

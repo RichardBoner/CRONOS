@@ -1,9 +1,11 @@
 import { useSignUp } from '@clerk/clerk-expo';
-// import JWT from 'expo-jwt';
-// import { SupportedAlgorithms } from 'expo-jwt/dist/types/algorithms';
+import JWT from 'expo-jwt';
+import { SupportedAlgorithms } from 'expo-jwt/dist/types/algorithms';
 import { Link, router } from 'expo-router';
 import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import { useRegisterUserMutation } from '@/graphql/generated';
 
 export default function SignUpScreen(): React.ReactNode {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -13,20 +15,30 @@ export default function SignUpScreen(): React.ReactNode {
   const [password, setPassword] = React.useState('');
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState('');
+  const [userJwt, setUserJwt] = React.useState('');
+  const currentDate = new Date().toISOString().split('T')[0];
 
-  // const key = 'AYEqnQcyGSM4';
-  // interface UserPayload {
-  //   id: string;
-  //   name: string;
-  //   password: string;
-  //   createdAt: string;
-  // }
+  const key = 'AYEqnQcyGSM4';
+  interface UserPayload {
+    email: string;
+    name: string;
+    password: string;
+    createdAt: string;
+  }
 
-  // const generateJWT = (userPayload: UserPayload): string => {
-  //   return JWT.encode(userPayload, key, SupportedAlgorithms.HS256);
-  // };
+  const generateJWT = (userPayload: UserPayload): string => {
+    return JWT.encode(userPayload, key, SupportedAlgorithms.HS256);
+  };
 
   const onSignUpPress = async (): Promise<void> => {
+    const userPayload: UserPayload = {
+      email: emailAddress,
+      name: username,
+      password,
+      createdAt: currentDate,
+    };
+    setUserJwt(generateJWT(userPayload));
+    HandleJwtSend(userJwt);
     if (!isLoaded) {
       return;
     }
@@ -38,24 +50,37 @@ export default function SignUpScreen(): React.ReactNode {
       });
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setPendingVerification(true);
-      // const userPayload: UserPayload = {
-      //   id: 'user_2dil6ujpJVWxRzJ9CLxHREKDJgE',
-      //   name: 'richardBonerExample',
-      //   password: 'examplePassword',
-      //   createdAt: '2022-04-05',
-      // };
-      // const jwt = generateJWT(userPayload);
+
+      HandleJwtSend(userJwt);
       router.push('/sign-in');
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
   };
+
   const handleVerify = (): void => {
     onPressVerify();
   };
   const handleSignUp = (): void => {
     onSignUpPress();
   };
+  const handleTestBut = (): void => {
+    const userPayload: UserPayload = {
+      email: emailAddress,
+      name: username,
+      password,
+      createdAt: currentDate,
+    };
+    const tempUserPayload = generateJWT(userPayload);
+    HandleJwtSend(tempUserPayload);
+  };
+  function HandleJwtSend(jwt: string): void {
+    useRegisterUserMutation({
+      variables: {
+        input: jwt,
+      },
+    });
+  }
   const onPressVerify = async (): Promise<void> => {
     if (!isLoaded) {
       return;
@@ -116,6 +141,18 @@ export default function SignUpScreen(): React.ReactNode {
                 borderRadius: 5,
               }}>
               <Text style={{ color: '#fff', fontWeight: 'bold' }}>Sign up</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ marginBottom: 10 }}>
+            <TouchableOpacity
+              onPress={handleTestBut}
+              style={{
+                backgroundColor: 'blue',
+                padding: 10,
+                alignItems: 'center',
+                borderRadius: 5,
+              }}>
+              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Test</Text>
             </TouchableOpacity>
           </View>
           <Link href="/sign-in">Login?</Link>
