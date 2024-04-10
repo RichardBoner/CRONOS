@@ -16,8 +16,8 @@ export default function SignUpScreen(): React.ReactNode {
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState('');
   const [userJwt, setUserJwt] = React.useState('');
+  const [createUser, { data, loading, error }] = useRegisterUserMutation();
   const currentDate = new Date().toISOString().split('T')[0];
-
   const key = 'AYEqnQcyGSM4';
   interface UserPayload {
     email: string;
@@ -31,14 +31,6 @@ export default function SignUpScreen(): React.ReactNode {
   };
 
   const onSignUpPress = async (): Promise<void> => {
-    const userPayload: UserPayload = {
-      email: emailAddress,
-      name: username,
-      password,
-      createdAt: currentDate,
-    };
-    setUserJwt(generateJWT(userPayload));
-    HandleJwtSend(userJwt);
     if (!isLoaded) {
       return;
     }
@@ -50,8 +42,20 @@ export default function SignUpScreen(): React.ReactNode {
       });
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setPendingVerification(true);
-
-      HandleJwtSend(userJwt);
+      const userPayload: UserPayload = {
+        email: emailAddress,
+        name: username,
+        password,
+        createdAt: currentDate,
+      };
+      setUserJwt(generateJWT(userPayload));
+      console.log(userJwt);
+      await createUser({
+        variables: {
+          input: { payload: userJwt },
+        },
+      });
+      console.log(error, loading, data);
       router.push('/sign-in');
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
@@ -71,16 +75,9 @@ export default function SignUpScreen(): React.ReactNode {
       password,
       createdAt: currentDate,
     };
-    const tempUserPayload = generateJWT(userPayload);
-    HandleJwtSend(tempUserPayload);
+    setUserJwt(generateJWT(userPayload));
+    console.log(userJwt);
   };
-  function HandleJwtSend(jwt: string): void {
-    useRegisterUserMutation({
-      variables: {
-        input: jwt,
-      },
-    });
-  }
   const onPressVerify = async (): Promise<void> => {
     if (!isLoaded) {
       return;

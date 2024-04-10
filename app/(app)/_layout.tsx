@@ -14,7 +14,7 @@ const AppLayout = (): React.ReactNode => {
     );
   if (!isSignedIn) return <Redirect href="/sign-in" />;
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerTitle: '' }}>
       <Stack.Screen name="(tabs)" />
     </Stack>
   );

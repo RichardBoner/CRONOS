@@ -7,7 +7,7 @@ const RootLayoutNav: React.FC = () => {
   const clerkKey = String(process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY);
   const client = new ApolloClient({
     link: new HttpLink({
-      uri: '',
+      uri: 'http://192.168.11.54:3000/api/graphql',
     }),
     cache: new InMemoryCache(),
   });
