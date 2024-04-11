@@ -29,6 +29,13 @@ query getUsersByScheduleId($getUsersByScheduleId: ID!) {
   }
 }
 
+query getUsersByEmail($getUsersByEmailId: ID!, $name: String) {
+  getUsersByEmail(name: $name) {
+    email
+    name
+  }
+}
+
 mutation Login($loginId: String!, $password: String!) {
   login(id: $loginId, password: $password)
 }

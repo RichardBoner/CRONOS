@@ -15,8 +15,7 @@ export default function SignUpScreen(): React.ReactNode {
   const [password, setPassword] = React.useState('');
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState('');
-  const [userJwt, setUserJwt] = React.useState('');
-  const [createUser, { data, loading, error }] = useRegisterUserMutation();
+  const [createUser] = useRegisterUserMutation();
   const currentDate = new Date().toISOString().split('T')[0];
   const key = 'AYEqnQcyGSM4';
   interface UserPayload {
@@ -42,21 +41,6 @@ export default function SignUpScreen(): React.ReactNode {
       });
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setPendingVerification(true);
-      const userPayload: UserPayload = {
-        email: emailAddress,
-        name: username,
-        password,
-        createdAt: currentDate,
-      };
-      setUserJwt(generateJWT(userPayload));
-      console.log(userJwt);
-      await createUser({
-        variables: {
-          input: { payload: userJwt },
-        },
-      });
-      console.log(error, loading, data);
-      router.push('/sign-in');
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
@@ -68,20 +52,11 @@ export default function SignUpScreen(): React.ReactNode {
   const handleSignUp = (): void => {
     onSignUpPress();
   };
-  const handleTestBut = (): void => {
-    const userPayload: UserPayload = {
-      email: emailAddress,
-      name: username,
-      password,
-      createdAt: currentDate,
-    };
-    setUserJwt(generateJWT(userPayload));
-    console.log(userJwt);
-  };
   const onPressVerify = async (): Promise<void> => {
     if (!isLoaded) {
       return;
     }
+    console.log(setActive);
 
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
@@ -89,6 +64,20 @@ export default function SignUpScreen(): React.ReactNode {
       });
 
       await setActive({ session: completeSignUp.createdSessionId });
+      const userPayload: UserPayload = {
+        email: emailAddress,
+        name: username,
+        password,
+        createdAt: currentDate,
+      };
+      const userJwt = generateJWT(userPayload);
+      console.log(userJwt);
+      await createUser({
+        variables: {
+          input: { payload: userJwt },
+        },
+      });
+      router.push('/sign-in');
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
@@ -138,18 +127,6 @@ export default function SignUpScreen(): React.ReactNode {
                 borderRadius: 5,
               }}>
               <Text style={{ color: '#fff', fontWeight: 'bold' }}>Sign up</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginBottom: 10 }}>
-            <TouchableOpacity
-              onPress={handleTestBut}
-              style={{
-                backgroundColor: 'blue',
-                padding: 10,
-                alignItems: 'center',
-                borderRadius: 5,
-              }}>
-              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Test</Text>
             </TouchableOpacity>
           </View>
           <Link href="/sign-in">Login?</Link>

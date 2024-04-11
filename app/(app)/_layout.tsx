@@ -14,7 +14,7 @@ const AppLayout = (): React.ReactNode => {
     );
   if (!isSignedIn) return <Redirect href="/sign-in" />;
   return (
-    <Stack screenOptions={{ headerTitle: '' }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#282b30' } }}>
       <Stack.Screen name="(tabs)" />
     </Stack>
   );

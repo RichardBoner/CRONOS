@@ -3,24 +3,34 @@ import { useGlobalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { TouchableWithoutFeedback, View, Text } from 'react-native';
 
+import SearchScreen from '@/components/SearchGameComponent';
+import { FormatDate, FormatTime } from '@/utils/FormattedDate';
+
+// interface Schedule {
+//   users: string[];
+//   creatorUserId: string;
+//   date: string;
+//   duration: string;
+//   gameId: string;
+// }
+
 export default function CreateScheduleScreen(): React.ReactNode {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState<string>('');
   const [show, setShow] = useState(false);
   const [primaryDate, setPrimaryDate] = useState('');
+  const [primaryTime, setprimaryTime] = useState('');
+  // const [scheduleData, setScheduleData] = useState<Schedule>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { id } = useGlobalSearchParams();
   const onChange = (event, selectedDate): void => {
     const currentDate: Date = selectedDate;
     setShow(false);
     setDate(currentDate);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
-    const day = String(date.getDate()).padStart(2, '0');
-    const formattedDate: string = `${year}-${month}-${day}`;
+    const formattedDate: string = FormatDate(date);
     setPrimaryDate(formattedDate);
-    console.log(primaryDate);
-    console.log(currentDate);
+    const formattedTime: string = FormatTime(date);
+    setprimaryTime(formattedTime);
   };
 
   const showMode = (currentMode): void => {
@@ -36,7 +46,8 @@ export default function CreateScheduleScreen(): React.ReactNode {
     showMode('time');
   };
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SearchScreen />
       {show && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -46,7 +57,8 @@ export default function CreateScheduleScreen(): React.ReactNode {
           onChange={onChange}
         />
       )}
-      <Text>{date}</Text>
+      <Text>{primaryDate}</Text>
+      <Text>{primaryTime}</Text>
       <Text>{id}</Text>
       <TouchableWithoutFeedback onPress={showDatepicker}>
         <Text>Select Time</Text>

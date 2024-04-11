@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import { View, Text, FlatList, TouchableWithoutFeedback } from 'react-native';
 
 import HeadGame from '@/components/HeadGame';
@@ -23,7 +24,7 @@ export default function HomeScreen(): React.ReactNode {
     // Add more dummy data objects as needed
   ];
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: '#000000' }}>
       <View
         style={{
           height: 400,
@@ -40,7 +41,7 @@ export default function HomeScreen(): React.ReactNode {
         data={dummyData}
         renderItem={({ item }) => (
           <TouchableWithoutFeedback>
-            <View style={{ flexDirection: 'row', width: '100%' }}>
+            <View style={{ flexDirection: 'row', width: '100%', borderCurve: 10 }}>
               <View
                 style={{
                   height: 50,
@@ -49,8 +50,11 @@ export default function HomeScreen(): React.ReactNode {
                   marginVertical: 2,
                   alignItems: 'center',
                   flexDirection: 'row',
+                  borderColor: '#585553',
+                  backgroundColor: '#34302e',
+                  paddingLeft: 13,
                 }}>
-                <Text>{item.gameId}</Text>
+                <Text style={{ color: '#a7a6a5' }}>{item.gameId}</Text>
                 <Text>{item.date}</Text>
                 <FlatList
                   style={{ flexDirection: 'row' }}
@@ -61,6 +65,11 @@ export default function HomeScreen(): React.ReactNode {
                     </View>
                   )}
                 />
+                <Link
+                  style={{ flex: 1, borderStartColor: '#fff', height: 10 }}
+                  href="/(app)/(stacks)/CreateSchedule/1">
+                  CreateScheduleTest
+                </Link>
               </View>
             </View>
           </TouchableWithoutFeedback>

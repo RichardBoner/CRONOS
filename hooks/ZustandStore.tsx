@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 
-export const useLoginContext = create((set) => ({
-  //false in production
-  LoggedIn: false,
-  setUnLogged: () => set((state: { LoggedIn: boolean }) => ({ LoggedIn: true })),
+export const useUserNameStore = create((set) => ({
+  selectedUsername: '',
+  setSelectedUsername: (newUsername: string) => set({ selectedUsername: newUsername }),
+}));
+
+export const useGameIdStore = create((set) => ({
+  selectedGameId: '',
+  setSelectedGameId: (newGameId: string) => set({ selectedGameId: newGameId }),
 }));
