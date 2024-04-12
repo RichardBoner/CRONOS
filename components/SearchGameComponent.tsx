@@ -9,63 +9,48 @@ import {
   TouchableHighlight,
   FlatList,
   StatusBar,
-  TouchableWithoutFeedback,
 } from 'react-native';
 
+import { useGetGamesLazyQuery, Game } from '@/graphql/generated';
 import { useGameIdStore } from '@/hooks/ZustandStore';
-import { Game, filter_game } from '@/types/Rawg-types';
-import { getGameWithFilter } from '@/utils/getGame';
 
 export default function SearchScreen(): React.ReactNode {
-  const [game, setGame] = useState<Game[] | undefined>(undefined);
-  const [inputValue, setInputValue] = useState('');
+  // const [game, setGame] = useState<Game[] | undefined>(undefined);
   const [gameName, setGameName] = useState('');
-  const [gameData, setGameData] = useState<filter_game>();
-  const [genre, setGenre] = useState<string>('');
-  const [searchParam, setSearchParam] = useState<string[]>([]);
-  const [selectingGame, setSelectingGame] = useState<boolean>(true);
+  const [gameData, setGameData] = useState<Game[]>();
+  const [selectingGame, setSelectingGame] = useState<boolean>(false);
   const [selectedGame, setSelectedGame] = useState<Game>();
   const updateSelectedGameId = useGameIdStore((state) => state.setSelectedGameId);
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
+  const [LazyGameQuery, { data, loading, error }] = useGetGamesLazyQuery();
 
   const fetchGame = async (): Promise<void> => {
     try {
-      setGenre(arrayToString(searchParam));
-      if (searchParam.length === 0 || (searchParam.length === 1 && searchParam[0] === '')) {
-        const tempGameData: filter_game | undefined = await getGameWithFilter(
-          `&search_precise=true&ordering=-rating&search={name=${gameName}}`,
-        );
-        setGameData(tempGameData);
-      } else {
-        const tempGameData: filter_game | undefined = await getGameWithFilter(
-          `&genres=${genre}&tags=${genre}&ordering=-rating&search={name=${gameName}}`,
-        );
-        setGameData(tempGameData);
-      }
-      if (gameData !== undefined) {
-        setGame(gameData.results);
-      }
+      await LazyGameQuery({
+        variables: {
+          query: `&search_precise=true&ordering=-rating&search={${gameName}}&search_exact=true`,
+        },
+      });
+      if (error) console.error(error);
+      waitUntilLoadingIsFalse();
     } catch (error) {
       console.error('Error fetching game:', error);
     }
   };
-  const arrayToString = (arr: string[]): string => {
-    return arr.join(',');
-  };
-  const handleAddWord = (): void => {
-    if (inputValue !== '') {
-      setSearchParam((searchParam) => [...searchParam, inputValue]);
-      setInputValue('');
+  const waitUntilLoadingIsFalse = async (): Promise<void> => {
+    if (loading) {
+      setTimeout(waitUntilLoadingIsFalse, 100); // Check again after 100 milliseconds
+    } else {
+      // Once loading is false, set the game data
+      setGameData(data?.getGames);
+      setUpdateFlag((prevFlag) => !prevFlag);
     }
-    fetchGame();
-  };
-  const handleItemRemoval = (value: string): void => {
-    setSearchParam(searchParam.filter((item) => item !== value));
   };
   const handleSearch = (): void => {
     fetchGame();
   };
   const handleSelectGame = (game: Game): void => {
-    updateSelectedGameId(game.id);
+    updateSelectedGameId(String(game.id));
     setSelectedGame(game);
     setSelectingGame(false);
   };
@@ -75,7 +60,7 @@ export default function SearchScreen(): React.ReactNode {
         style={{
           flex: 1,
           paddingTop: StatusBar.currentHeight,
-          backgroundColor: '#3A3C42',
+          backgroundColor: '#000',
           width: '100%',
           height: '100%',
           position: 'absolute',
@@ -91,90 +76,64 @@ export default function SearchScreen(): React.ReactNode {
               style={{
                 height: 40,
                 borderWidth: 1,
-                borderColor: '#9BA8A8',
+                borderColor: '#ffa',
                 borderRadius: 5,
                 flex: 1,
                 padding: 8,
+                color: '#fff',
               }}
             />
             <TouchableHighlight onPress={handleSearch}>
               <View
                 style={{ height: 40, width: 40, justifyContent: 'center', alignItems: 'center' }}>
-                <AntDesign name="pluscircleo" size={24} color="black" />
+                <AntDesign name="pluscircleo" size={24} color="#ffa" />
               </View>
             </TouchableHighlight>
           </View>
-          <View style={{ flexDirection: 'row' }}>
-            <TextInput
-              onChangeText={setInputValue}
-              value={inputValue}
-              placeholder="Tags..."
+        </View>
+        <FlatList
+          style={{ flex: 1, gap: 4 }}
+          data={gameData}
+          extraData={updateFlag}
+          renderItem={({ item }) => (
+            <TouchableHighlight
+              onPress={() => handleSelectGame(item)}
               style={{
-                height: 40,
-                borderWidth: 1,
-                borderColor: '#9BA8A8',
-                borderRadius: 5,
-                flex: 1,
-                padding: 8,
-              }}
-            />
-            <TouchableHighlight onPress={handleAddWord}>
-              <View
-                style={{ height: 40, width: 40, justifyContent: 'center', alignItems: 'center' }}>
-                <AntDesign name="pluscircleo" size={24} color="black" />
-              </View>
-            </TouchableHighlight>
-          </View>
-          <View>
-            <FlatList
-              horizontal
-              style={{ height: 100, width: '100%' }}
-              data={searchParam}
-              renderItem={({ item }) => (
-                <TouchableWithoutFeedback onPress={() => handleItemRemoval(item)}>
-                  <View
-                    style={{
-                      width: 80,
-                      height: 30,
-                      borderWidth: 2,
-                      borderRadius: 20,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text>{item}</Text>
-                  </View>
-                </TouchableWithoutFeedback>
-              )}
-            />
-          </View>
-          <FlatList
-            style={{ flex: 1, gap: 4 }}
-            data={game}
-            renderItem={({ item }) => (
-              <TouchableHighlight
-                onPress={() => handleSelectGame(item)}
-                style={{ height: 60, marginHorizontal: 4, backgroundColor: '#333333' }}>
-                <View>
-                  <ImageBackground
-                    source={{ uri: `${item.background_image}` }}
-                    resizeMethod="resize"
-                    style={{ width: 150, height: 60 }}
-                  />
+                height: 60,
+                marginHorizontal: 8,
+                marginVertical: 5,
+                backgroundColor: '#333333',
+                borderWidth: 2,
+                borderColor: '#9ff',
+              }}>
+              <View style={{ flexDirection: 'row' }}>
+                <ImageBackground
+                  source={{ uri: `${item.background_image}` }}
+                  resizeMethod="resize"
+                  style={{
+                    width: 150,
+                    height: 56,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+                <View style={{ height: 24, flexDirection: 'row' }}>
                   <View
                     style={{
                       width: 34,
                       height: 24,
-                      backgroundColor: '#06C149',
-                      borderRadius: 6,
+                      backgroundColor: '#C8F87E',
                       alignItems: 'center',
                     }}>
                     <Text>{item.rating}</Text>
                   </View>
+                  <Text style={{ color: '#ffa' }}>{item.name}</Text>
                 </View>
-              </TouchableHighlight>
-            )}
-          />
-        </View>
+              </View>
+            </TouchableHighlight>
+          )}
+        />
       </View>
     );
   } else {
@@ -186,6 +145,8 @@ export default function SearchScreen(): React.ReactNode {
           flexDirection: 'row',
           alignItems: 'center',
           backgroundColor: '#000',
+          borderWidth: 3,
+          borderColor: '#fff',
         }}>
         <ImageBackground
           source={{ uri: `${selectedGame?.background_image}` }}
@@ -200,11 +161,11 @@ export default function SearchScreen(): React.ReactNode {
             alignItems: 'center',
             paddingHorizontal: 10,
           }}>
-          <Text style={{ color: '#fff', width: 200 }} numberOfLines={1} ellipsizeMode="tail">
+          <Text style={{ color: '#F8EB7E', width: 200 }} numberOfLines={1} ellipsizeMode="tail">
             {selectedGame?.name}
           </Text>
           <TouchableHighlight onPress={() => setSelectingGame(true)}>
-            <Text style={{ color: '#fff' }}>Change Game?</Text>
+            <Text style={{ color: '#F8EB7E' }}>Change Game?</Text>
           </TouchableHighlight>
         </View>
       </View>

@@ -5,7 +5,12 @@ export const useUserNameStore = create((set) => ({
   setSelectedUsername: (newUsername: string) => set({ selectedUsername: newUsername }),
 }));
 
-export const useGameIdStore = create((set) => ({
+interface GameState {
+  selectedGameId: string;
+  setSelectedGameId: (by: string) => void;
+}
+
+export const useGameIdStore = create<GameState>((set) => ({
   selectedGameId: '',
   setSelectedGameId: (newGameId: string) => set({ selectedGameId: newGameId }),
 }));

@@ -29,7 +29,7 @@ query getUsersByScheduleId($getUsersByScheduleId: ID!) {
   }
 }
 
-query getUsersByEmail($getUsersByEmailId: ID!, $name: String) {
+query getUsersByEmail( $name: String) {
   getUsersByEmail(name: $name) {
     email
     name
