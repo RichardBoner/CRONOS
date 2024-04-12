@@ -84,7 +84,8 @@ export default function SignUpScreen(): React.ReactNode {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
       {!pendingVerification && (
         <View style={{ width: '80%' }}>
           <View style={{ marginBottom: 10 }}>

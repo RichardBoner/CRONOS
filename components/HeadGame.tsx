@@ -51,7 +51,7 @@ export default function HeadGame(): React.ReactNode {
             flexDirection: 'row',
           }}>
           <TouchableWithoutFeedback>
-            <MaterialCommunityIcons name="triangle" size={24} color="#8B5CF6" />
+            <MaterialCommunityIcons name="triangle" size={24} color="#ffa" />
           </TouchableWithoutFeedback>
           <View style={{ width: 76, height: 28, flexDirection: 'row', gap: 20 }}>
             <Link href="/(stacks)/Search/">
@@ -103,7 +103,7 @@ export default function HeadGame(): React.ReactNode {
         <View style={{ flexDirection: 'row', gap: 20 }}>
           <TouchableHighlight
             style={{
-              backgroundColor: '#8B5CF6',
+              backgroundColor: '#ffa',
               height: 32,
               width: 120,
               justifyContent: 'center',
@@ -111,8 +111,8 @@ export default function HeadGame(): React.ReactNode {
               borderRadius: 25,
             }}>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-              <AntDesign name="play" size={16} color="white" />
-              <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>Schedules</Text>
+              <AntDesign name="play" size={16} color="black" />
+              <Text style={{ color: 'black', fontWeight: '600', fontSize: 14 }}>Schedules</Text>
             </View>
           </TouchableHighlight>
 

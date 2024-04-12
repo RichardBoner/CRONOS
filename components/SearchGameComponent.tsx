@@ -1,5 +1,4 @@
 import { AntDesign } from '@expo/vector-icons';
-import { Link } from 'expo-router';
 import { useState } from 'react';
 import {
   Text,
@@ -50,7 +49,7 @@ export default function SearchScreen(): React.ReactNode {
     fetchGame();
   };
   const handleSelectGame = (game: Game): void => {
-    updateSelectedGameId(String(game.id));
+    updateSelectedGameId(game);
     setSelectedGame(game);
     setSelectingGame(false);
   };
@@ -67,7 +66,6 @@ export default function SearchScreen(): React.ReactNode {
           zIndex: 2,
         }}>
         <View style={{ flex: 1 }}>
-          <Link href="/(app)/(tabs)">Home remove in prod</Link>
           <View style={{ flexDirection: 'row' }}>
             <TextInput
               onChangeText={setGameName}
@@ -140,18 +138,19 @@ export default function SearchScreen(): React.ReactNode {
     return (
       <View
         style={{
-          width: 400,
+          width: 380,
           height: 50,
           flexDirection: 'row',
           alignItems: 'center',
           backgroundColor: '#000',
           borderWidth: 3,
-          borderColor: '#fff',
+          borderColor: '#ffa',
+          borderRadius: 5,
         }}>
         <ImageBackground
           source={{ uri: `${selectedGame?.background_image}` }}
           resizeMethod="resize"
-          style={{ width: 50, height: 50 }}
+          style={{ width: 50, height: 44 }}
         />
         <View
           style={{

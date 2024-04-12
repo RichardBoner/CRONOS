@@ -28,17 +28,32 @@ export default function SignInScreen(): React.ReactNode {
     onSignInPress();
   };
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
       <View style={{ width: 300, gap: 10 }}>
         <TextInput
-          style={{ borderWidth: 1, padding: 10, borderColor: '#ccc', width: 300, height: 50 }}
+          style={{
+            borderWidth: 1,
+            padding: 10,
+            borderColor: '#ffa',
+            width: 300,
+            height: 50,
+            color: '#fff',
+          }}
           autoCapitalize="none"
           value={emailAddress}
           placeholder="Email..."
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
         <TextInput
-          style={{ borderWidth: 1, padding: 10, borderColor: '#ccc', width: 300, height: 50 }}
+          style={{
+            borderWidth: 1,
+            padding: 10,
+            borderColor: '#ffa',
+            width: 300,
+            height: 50,
+            color: '#fff',
+          }}
           value={password}
           placeholder="Password..."
           secureTextEntry
@@ -48,7 +63,7 @@ export default function SignInScreen(): React.ReactNode {
         <TouchableOpacity
           onPress={handleSignInPress}
           style={{
-            backgroundColor: 'blue',
+            backgroundColor: '#ffa',
             padding: 10,
             alignItems: 'center',
             justifyContent: 'center',
@@ -56,7 +71,7 @@ export default function SignInScreen(): React.ReactNode {
             width: '100%',
             height: 50,
           }}>
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Sign in</Text>
+          <Text style={{ color: '#000', fontWeight: 'bold' }}>Sign in</Text>
         </TouchableOpacity>
         <Link
           href="/sign-up"

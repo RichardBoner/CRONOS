@@ -50,8 +50,7 @@ export default function HomeScreen(): React.ReactNode {
                   marginVertical: 2,
                   alignItems: 'center',
                   flexDirection: 'row',
-                  borderColor: '#585553',
-                  backgroundColor: '#34302e',
+                  borderColor: '#ffa',
                   paddingLeft: 13,
                 }}>
                 <Text style={{ color: '#a7a6a5' }}>{item.gameId}</Text>

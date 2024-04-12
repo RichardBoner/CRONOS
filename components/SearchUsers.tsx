@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { View, Text, TextInput, FlatList, TouchableHighlight, StatusBar } from 'react-native';
 
 import { SimpleUserData, useGetUsersByEmailLazyQuery } from '@/graphql/generated';
+import { useUserStore } from '@/hooks/ZustandStore';
 
 export default function UserSearchScreen(): React.ReactNode {
   const [LazyUserQuery, { data, loading, error }] = useGetUsersByEmailLazyQuery();
   const [users, setUsers] = useState<SimpleUserData[]>();
   const [username, setUsername] = useState('');
   const [isSelecting, setIsSelecting] = useState(false);
+  const updateUseSelectedUsers = useUserStore((state) => state.addSelectedUsername);
+  const SelectedUsers = useUserStore((state) => state.selectedUsernames);
   useEffect(() => {
     fetchUsers();
   }, [username]);
@@ -32,8 +35,9 @@ export default function UserSearchScreen(): React.ReactNode {
       setUsers(data?.getUsersByEmail);
     }
   };
-  const handleUserScreach = (): void => {
+  const handleUserScreach = (user: string, email: string): void => {
     setIsSelecting(false);
+    updateUseSelectedUsers(user, email);
   };
   if (isSelecting === true) {
     return (
@@ -64,7 +68,7 @@ export default function UserSearchScreen(): React.ReactNode {
         <FlatList
           data={users}
           renderItem={({ item }) => (
-            <TouchableHighlight onPress={handleUserScreach}>
+            <TouchableHighlight onPress={() => handleUserScreach(item.email, item.name)}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -83,6 +87,59 @@ export default function UserSearchScreen(): React.ReactNode {
             </TouchableHighlight>
           )}
         />
+      </View>
+    );
+  } else {
+    return (
+      <View
+        style={{
+          width: 380,
+          height: 200,
+          flexDirection: 'column',
+          alignItems: 'center',
+          backgroundColor: '#222',
+          borderWidth: 5,
+          borderColor: '#ffa',
+          marginBottom: 10,
+          borderRadius: 10,
+        }}>
+        <FlatList
+          data={SelectedUsers}
+          style={{ height: 200 }}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flexDirection: 'row',
+                width: 355,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                height: 30,
+                borderWidth: 2,
+                borderColor: '#9ff',
+                margin: 3,
+                paddingHorizontal: 5,
+              }}>
+              <Text style={{ color: '#ffa' }}>{item.name}</Text>
+              <Text style={{ color: '#fff' }}>{item.email}</Text>
+            </View>
+          )}
+        />
+        <TouchableHighlight onPress={() => setIsSelecting(true)}>
+          <Text
+            style={{
+              color: '#ffa',
+              borderWidth: 2,
+              borderColor: '#ffa',
+              width: 355,
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+              marginBottom: 3,
+              borderRadius: 10,
+            }}>
+            + add user
+          </Text>
+        </TouchableHighlight>
       </View>
     );
   }

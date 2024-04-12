@@ -5,7 +5,11 @@ import { Tabs } from 'expo-router';
 
 const TabLayout: React.FC = () => {
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        tabBarActiveBackgroundColor: '#ff0',
+        tabBarInactiveBackgroundColor: '#ffa',
+      }}>
       <Tabs.Screen
         name="index"
         options={{
