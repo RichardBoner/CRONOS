@@ -1,7 +1,6 @@
 import { AntDesign, MaterialCommunityIcons, Fontisto, Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
-import { useEffect, useState } from 'react';
 import {
   View,
   ImageBackground,
@@ -10,41 +9,36 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-import { Game, filter_game } from '@/types/Rawg-types';
-import { getGameWithFilter } from '@/utils/getGame';
+import { useGetGamesQuery } from '@/graphql/generated';
 
 export default function HeadGame(): React.ReactNode {
-  const [game, setGame] = useState<Game | undefined>(undefined);
+  const { loading, error, data } = useGetGamesQuery({
+    variables: {
+      query: '&ordering=-metacritic&search_precise=true',
+    },
+  });
+  if (error) return <Text>Error: {error.message}</Text>;
+  if (loading)
+    return (
+      <View>
+        <Text>Loading...</Text>
+        <Text>{error}</Text>
+      </View>
+    );
+  const games = data?.getGames[0];
 
-  useEffect(() => {
-    const fetchGame = async (): Promise<void> => {
-      try {
-        const gameData: filter_game | undefined = await getGameWithFilter(
-          `&ordering=-rating&search_precise=true&dates=2013-09-17,2024-02-23`,
-        ); // Fetch game with ID 1
-        if (gameData !== undefined) {
-          const firtsResult = gameData?.results[0];
-          setGame(firtsResult);
-        } else {
-          console.error('fetch failed');
-        }
-      } catch (error) {
-        console.error('Error fetching game:', error);
-      }
-    };
-
-    fetchGame();
-    return () => {
-      // Any cleanup code
-    };
-  }, []);
   return (
     <ImageBackground
-      source={{ uri: `${game?.background_image}` }}
+      source={{ uri: `${games?.background_image}` }}
       resizeMethod="resize"
-      style={{ height: 400, justifyContent: 'flex-end' }}>
+      style={{
+        height: 400,
+        width: '100%',
+        justifyContent: 'flex-end',
+        borderColor: 'black',
+      }}>
       <LinearGradient
-        style={{ flex: 1, paddingTop: 68, width: '100%' }}
+        style={{ flex: 1, paddingTop: 68, width: '100%', height: 400 }}
         colors={['#000000ba', '#0000']}
         start={[0, 0]}
         end={[0, 1]}>
@@ -57,10 +51,10 @@ export default function HeadGame(): React.ReactNode {
             flexDirection: 'row',
           }}>
           <TouchableWithoutFeedback>
-            <MaterialCommunityIcons name="triangle" size={24} color="#8B5CF6" />
+            <MaterialCommunityIcons name="triangle" size={24} color="#ffa" />
           </TouchableWithoutFeedback>
           <View style={{ width: 76, height: 28, flexDirection: 'row', gap: 20 }}>
-            <Link href="(search)">
+            <Link href="/(stacks)/Search/">
               <AntDesign name="search1" size={28} color="#fff" />
             </Link>
             <TouchableWithoutFeedback>
@@ -91,7 +85,7 @@ export default function HeadGame(): React.ReactNode {
             width: '100%',
             height: 29,
           }}>
-          {game?.name}
+          {games?.name}
         </Text>
         <Text
           numberOfLines={1}
@@ -104,12 +98,12 @@ export default function HeadGame(): React.ReactNode {
             flex: 1,
             height: 14,
           }}>
-          {game?.rating}
+          {games?.rating}
         </Text>
         <View style={{ flexDirection: 'row', gap: 20 }}>
           <TouchableHighlight
             style={{
-              backgroundColor: '#8B5CF6',
+              backgroundColor: '#ffa',
               height: 32,
               width: 120,
               justifyContent: 'center',
@@ -117,8 +111,8 @@ export default function HeadGame(): React.ReactNode {
               borderRadius: 25,
             }}>
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-              <AntDesign name="play" size={16} color="white" />
-              <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>Schedules</Text>
+              <AntDesign name="play" size={16} color="black" />
+              <Text style={{ color: 'black', fontWeight: '600', fontSize: 14 }}>Schedules</Text>
             </View>
           </TouchableHighlight>
 

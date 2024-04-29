@@ -7,6 +7,12 @@ module.exports = {
         project: './tsconfig.json',
       },
       rules: {
+        'prettier/prettier': [
+          'error',
+          {
+            endOfLine: 'auto',
+          },
+        ],
         '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/no-unused-vars': 'error',
         '@typescript-eslint/explicit-function-return-type': [
@@ -22,7 +28,6 @@ module.exports = {
         '@typescript-eslint/strict-boolean-expressions': 'error',
         '@typescript-eslint/prefer-optional-chain': 'error',
         '@typescript-eslint/prefer-nullish-coalescing': 'error',
-        '@typescript-eslint/no-misused-promises': 'error',
         '@typescript-eslint/no-var-requires': 'error',
         '@typescript-eslint/no-namespace': 'error',
         '@typescript-eslint/triple-slash-reference': 'error',

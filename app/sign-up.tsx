@@ -1,7 +1,11 @@
 import { useSignUp } from '@clerk/clerk-expo';
-import { Link } from 'expo-router';
-import * as React from 'react';
+import JWT from 'expo-jwt';
+import { SupportedAlgorithms } from 'expo-jwt/dist/types/algorithms';
+import { Link, router } from 'expo-router';
+import React from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import { useRegisterUserMutation } from '@/graphql/generated';
 
 export default function SignUpScreen(): React.ReactNode {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -11,41 +15,48 @@ export default function SignUpScreen(): React.ReactNode {
   const [password, setPassword] = React.useState('');
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState('');
+  const [createUser] = useRegisterUserMutation();
+  const currentDate = new Date().toISOString().split('T')[0];
+  const key = 'AYEqnQcyGSM4';
+  interface UserPayload {
+    email: string;
+    name: string;
+    password: string;
+    createdAt: string;
+  }
 
-  // start the sign up process.
+  const generateJWT = (userPayload: UserPayload): string => {
+    return JWT.encode(userPayload, key, SupportedAlgorithms.HS256);
+  };
+
   const onSignUpPress = async (): Promise<void> => {
     if (!isLoaded) {
       return;
     }
-
     try {
       await signUp.create({
         username,
         emailAddress,
         password,
       });
-
-      // send the email.
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-
-      // change the UI to our pending section.
       setPendingVerification(true);
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
   };
+
   const handleVerify = (): void => {
     onPressVerify();
   };
   const handleSignUp = (): void => {
     onSignUpPress();
   };
-
-  // This verifies the user using email code that is delivered.
   const onPressVerify = async (): Promise<void> => {
     if (!isLoaded) {
       return;
     }
+    console.log(setActive);
 
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
@@ -53,13 +64,28 @@ export default function SignUpScreen(): React.ReactNode {
       });
 
       await setActive({ session: completeSignUp.createdSessionId });
+      const userPayload: UserPayload = {
+        email: emailAddress,
+        name: username,
+        password,
+        createdAt: currentDate,
+      };
+      const userJwt = generateJWT(userPayload);
+      console.log(userJwt);
+      await createUser({
+        variables: {
+          input: { payload: userJwt },
+        },
+      });
+      router.push('/sign-in');
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
       {!pendingVerification && (
         <View style={{ width: '80%' }}>
           <View style={{ marginBottom: 10 }}>
@@ -104,7 +130,7 @@ export default function SignUpScreen(): React.ReactNode {
               <Text style={{ color: '#fff', fontWeight: 'bold' }}>Sign up</Text>
             </TouchableOpacity>
           </View>
-          <Link href="/(Login)/Login">Login?</Link>
+          <Link href="/sign-in">Login?</Link>
         </View>
       )}
       {pendingVerification && (

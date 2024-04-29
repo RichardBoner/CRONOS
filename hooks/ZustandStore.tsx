@@ -1,7 +1,30 @@
 import { create } from 'zustand';
 
-export const useLoginContext = create((set) => ({
-  //false in production
-  LoggedIn: false,
-  setUnLogged: () => set((state: { LoggedIn: boolean }) => ({ LoggedIn: true })),
+import { Game } from '@/graphql/generated';
+
+interface UserState {
+  selectedUsernames: { email: string }[];
+  addSelectedUsername: (email: string) => void;
+  removeSelectedUsername: (email: string) => void;
+}
+
+export const useUserStore = create<UserState>((set) => ({
+  selectedUsernames: [],
+  addSelectedUsername: (email) =>
+    set((state) => ({
+      selectedUsernames: [...state.selectedUsernames, { email }],
+    })),
+  removeSelectedUsername: (email) =>
+    set((state) => ({
+      selectedUsernames: state.selectedUsernames.filter((user) => user.email !== email),
+    })),
+}));
+interface GameState {
+  selectedGameId: Game;
+  setSelectedGameId: (by: Game) => void;
+}
+
+export const useGameIdStore = create<GameState>((set) => ({
+  selectedGameId: {},
+  setSelectedGameId: (newGameId: Game) => set({ selectedGameId: newGameId }),
 }));

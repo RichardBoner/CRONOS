@@ -1,29 +1,27 @@
-import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
-import { dark } from '@clerk/themes';
-import { Stack } from 'expo-router';
-
-export const unstable_settings = {
-  initialRouteName: '/(Login)',
-};
+import { ApolloClient, ApolloProvider, InMemoryCache, HttpLink } from '@apollo/client';
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { Slot } from 'expo-router';
+import { KeyboardAvoidingView } from 'react-native';
 
 const RootLayoutNav: React.FC = () => {
-  const publishableKey = 'pk_test_d29uZHJvdXMtZ29waGVyLTQyLmNsZXJrLmFjY291bnRzLmRldiQ';
+  const clerkKey = String(process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  const client = new ApolloClient({
+    link: new HttpLink({
+      uri: 'http://192.168.1.9:3000/api/graphql',
+    }),
+    cache: new InMemoryCache(),
+  });
+  if (!clerkKey) {
+    console.error('clerk Key Missing');
+  }
   return (
-    <ClerkProvider publishableKey={publishableKey} appearance={{ baseTheme: dark }}>
-      <SignedOut>
-        <Stack>
-          <Stack.Screen name="(Login)" />
-        </Stack>
-      </SignedOut>
-      <SignedIn>
-        <Stack initialRouteName="(tabs)">
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(search)" options={{ headerShown: false }} />
-          <Stack.Screen name="Game/GamesCat/[id]" />
-          <Stack.Screen name="Game/[id]" />
-        </Stack>
-      </SignedIn>
-    </ClerkProvider>
+    <KeyboardAvoidingView style={{ flex: 1 }}>
+      <ClerkProvider publishableKey={clerkKey}>
+        <ApolloProvider client={client}>
+          <Slot />
+        </ApolloProvider>
+      </ClerkProvider>
+    </KeyboardAvoidingView>
   );
 };
 

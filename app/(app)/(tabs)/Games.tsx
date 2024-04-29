@@ -15,7 +15,7 @@ import {
 import { Game, filter_game } from '@/types/Rawg-types';
 import { getGameWithFilter } from '@/utils/getGame';
 
-export default function SearchScreen(): React.ReactNode {
+export default function Games(): React.ReactNode {
   const [game, setGame] = useState<Game[] | undefined>(undefined);
   const [inputValue, setInputValue] = useState('');
   const [gameName, setGameName] = useState('');
@@ -69,12 +69,11 @@ export default function SearchScreen(): React.ReactNode {
   return (
     <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, backgroundColor: '#3A3C42' }}>
       <View style={{ flex: 1 }}>
-        <Link href="/(tabs)">Home remove in prod</Link>
         <View style={{ flexDirection: 'row' }}>
           <TextInput
             onChangeText={setGameName}
             value={gameName}
-            placeholder="Tags..."
+            placeholder="game Name"
             style={{
               height: 40,
               borderWidth: 1,
@@ -137,7 +136,7 @@ export default function SearchScreen(): React.ReactNode {
           data={game}
           renderItem={({ item }) => (
             <Link
-              href={`/Game/${item.id}`}
+              href={`/(app)/(stacks)/CreateSchedule/${item.id}`}
               style={{ height: 60, marginHorizontal: 4, backgroundColor: '#333333' }}>
               <ImageBackground
                 source={{ uri: `${item.background_image}` }}
