@@ -4,24 +4,31 @@ import { TouchableWithoutFeedback, View, Text, TextInput, TouchableHighlight } f
 
 import SearchScreen from '@/components/SearchGameComponent';
 import UserSearchScreen from '@/components/SearchUsers';
-// import { useGameIdStore } from '@/hooks/ZustandStore';
+import { useGameIdStore, useUserStore } from '@/hooks/ZustandStore';
+import { useUser } from '@clerk/clerk-expo';
 
-// interface Schedule {
-//   users: string[];
-//   creatorUserId: string;
-//   date: string;
-//   duration: string;
-//   gameId: string;
-// }
+interface Schedule {
+  users: string[];
+  creatorUserId: string;
+  date: string;
+  duration: string;
+  gameId: string;
+}
 
 export default function CreateScheduleScreen(): React.ReactNode {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState<string>('');
   const [show, setShow] = useState(false);
   const [Duration, setDuration] = useState('');
-  // const [scheduleData, setScheduleData] = useState<Schedule>();
+  const [scheduleData, setScheduleData] = useState<Schedule>();
+  const { user, isLoaded } = useUser();
+
+  if (!isLoaded) {
+    return <Text>Loading...</Text>;
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // const gameId = useGameIdStore((state) => state.selectedGameId);
+  const gameId = useGameIdStore((state) => state.selectedGameId);
+  const userArray = useUserStore((state) => state.selectedUsernames);
   const onChange = (event, selectedDate): void => {
     const currentDate: Date = selectedDate;
     setShow(false);
@@ -40,6 +47,19 @@ export default function CreateScheduleScreen(): React.ReactNode {
   const showTimepicker = (): void => {
     showMode('time');
   };
+
+  // const SendSchedule = (): void => {
+  //   if (Duration && user) {
+  //     const schedule: Schedule = {
+  //       users: userArray;
+  // creatorUserId: string;
+  // date: string;
+  // duration: string;
+  // gameId: string;
+  //     }
+  //   }
+  // };
+  
   return (
     <View
       style={{
@@ -117,10 +137,21 @@ export default function CreateScheduleScreen(): React.ReactNode {
         />
         <UserSearchScreen />
         <SearchScreen />
+        <TouchableHighlight
+          style={{
+            height: 45,
+            width: 378,
+            borderWidth: 1,
+            borderColor: '#ffa',
+            padding: 8,
+            backgroundColor: '#ffa',
+            borderRadius: 5,
+            marginTop: 10,
+          }}>
+          <Text style={{ color: '#000', textAlign: 'center' }}>Create Schedule?</Text>
+        </TouchableHighlight>
       </View>
-      <TouchableHighlight>
-        <Text>Create Schedule?</Text>
-      </TouchableHighlight>
+
       {show && (
         <DateTimePicker
           testID="dateTimePicker"

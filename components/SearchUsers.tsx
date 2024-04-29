@@ -37,7 +37,7 @@ export default function UserSearchScreen(): React.ReactNode {
   };
   const handleUserScreach = (user: string, email: string): void => {
     setIsSelecting(false);
-    updateUseSelectedUsers(user, email);
+    updateUseSelectedUsers(user);
   };
   if (isSelecting === true) {
     return (
