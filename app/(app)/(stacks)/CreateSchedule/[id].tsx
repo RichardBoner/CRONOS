@@ -1,11 +1,12 @@
+import { useUser } from '@clerk/clerk-expo';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
 import { TouchableWithoutFeedback, View, Text, TextInput, TouchableHighlight } from 'react-native';
 
 import SearchScreen from '@/components/SearchGameComponent';
 import UserSearchScreen from '@/components/SearchUsers';
+import { useCreateScheduleMutation } from '@/graphql/generated';
 import { useGameIdStore, useUserStore } from '@/hooks/ZustandStore';
-import { useUser } from '@clerk/clerk-expo';
 
 interface Schedule {
   users: string[];
@@ -22,12 +23,14 @@ export default function CreateScheduleScreen(): React.ReactNode {
   const [Duration, setDuration] = useState('');
   const [scheduleData, setScheduleData] = useState<Schedule>();
   const { user, isLoaded } = useUser();
+  const [createScheduleMutation] = useCreateScheduleMutation();
 
   if (!isLoaded) {
     return <Text>Loading...</Text>;
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, react-hooks/rules-of-hooks
   const gameId = useGameIdStore((state) => state.selectedGameId);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const userArray = useUserStore((state) => state.selectedUsernames);
   const onChange = (event, selectedDate): void => {
     const currentDate: Date = selectedDate;
@@ -48,18 +51,29 @@ export default function CreateScheduleScreen(): React.ReactNode {
     showMode('time');
   };
 
-  // const SendSchedule = (): void => {
-  //   if (Duration && user) {
-  //     const schedule: Schedule = {
-  //       users: userArray;
-  // creatorUserId: string;
-  // date: string;
-  // duration: string;
-  // gameId: string;
-  //     }
-  //   }
-  // };
-  
+  const handleCreateScheduleButtonPress = (): void => {
+    SendSchedule();
+  };
+
+  const SendSchedule = async (): Promise<void> => {
+    if (Duration && user) {
+      const schedule: Schedule = {
+        users: userArray,
+        creatorUserId: String(user.primaryEmailAddress),
+        date: String(date),
+        duration: Duration,
+        gameId: String(gameId.id),
+      };
+      console.log(schedule);
+      createScheduleMutation({
+        variables: {
+          input: schedule,
+        },
+      });
+    } else {
+      console.error('insufficient information');
+    }
+  };
   return (
     <View
       style={{
@@ -147,7 +161,8 @@ export default function CreateScheduleScreen(): React.ReactNode {
             backgroundColor: '#ffa',
             borderRadius: 5,
             marginTop: 10,
-          }}>
+          }}
+          onPress={handleCreateScheduleButtonPress}>
           <Text style={{ color: '#000', textAlign: 'center' }}>Create Schedule?</Text>
         </TouchableHighlight>
       </View>

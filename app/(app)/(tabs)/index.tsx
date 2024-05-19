@@ -1,28 +1,41 @@
+import { useUser } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableWithoutFeedback } from 'react-native';
 
 import HeadGame from '@/components/HeadGame';
+import { GetScheduleByIdQuery, useGetScheduleByIdLazyQuery } from '@/graphql/generated';
 
 export default function HomeScreen(): React.ReactNode {
-  const dummyData = [
-    {
-      creatorUserId: 'user1',
-      date: '2024-04-09',
-      duration: '1 hour',
-      gameId: 'game1',
-      id: '1',
-      users: ['user1', 'user2'],
-    },
-    {
-      creatorUserId: 'user2',
-      date: '2024-04-10',
-      duration: '45 minutes',
-      gameId: 'game2',
-      id: '2',
-      users: ['user1', 'user2'],
-    },
-    // Add more dummy data objects as needed
-  ];
+  const [scheduleArray, setScheduleArray] = useState<GetScheduleByIdQuery | undefined>();
+  const [LazyScheduleQuery, { data, loading, error }] = useGetScheduleByIdLazyQuery();
+  const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+    const getUserSchedules = async (): Promise<void> => {
+      if (isLoaded && user)
+        try {
+          await LazyScheduleQuery({
+            variables: {
+              getScheduleByIdId: String(user?.primaryEmailAddress),
+            },
+          });
+          if (error) console.error(error);
+          waitUntilLoadingIsFalse();
+        } catch (error) {
+          console.error('Error fetching game:', error);
+        }
+    };
+    getUserSchedules();
+  }, []);
+
+  const waitUntilLoadingIsFalse = async (): Promise<void> => {
+    if (loading && !data) {
+      return <Text>Loading...</Text>;
+    } else {
+      setScheduleArray(data?.getScheduleById);
+    }
+  };
   return (
     <View style={{ flex: 1, backgroundColor: '#000000' }}>
       <View
@@ -38,10 +51,10 @@ export default function HomeScreen(): React.ReactNode {
       </View>
       <FlatList
         style={{ height: 100, width: '100%' }}
-        data={dummyData}
+        data={scheduleArray}
         renderItem={({ item }) => (
           <TouchableWithoutFeedback>
-            <View style={{ flexDirection: 'row', width: '100%', borderCurve: 10 }}>
+            <View style={{ flexDirection: 'row', width: '100%', borderRadius: 10 }}>
               <View
                 style={{
                   height: 50,

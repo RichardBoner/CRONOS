@@ -1,162 +1,181 @@
-import { AntDesign } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import { useEffect, useState } from 'react';
-import {
-  Text,
-  TextInput,
-  View,
-  ImageBackground,
-  TouchableHighlight,
-  FlatList,
-  StatusBar,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { useUser } from '@clerk/clerk-expo';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState } from 'react';
+import { TouchableWithoutFeedback, View, Text, TextInput, TouchableHighlight } from 'react-native';
 
-import { Game, filter_game } from '@/types/Rawg-types';
-import { getGameWithFilter } from '@/utils/getGame';
+import SearchScreen from '@/components/SearchGameComponent';
+import UserSearchScreen from '@/components/SearchUsers';
+import { useCreateScheduleMutation } from '@/graphql/generated';
+import { useGameIdStore, useUserStore } from '@/hooks/ZustandStore';
 
-export default function Games(): React.ReactNode {
-  const [game, setGame] = useState<Game[] | undefined>(undefined);
-  const [inputValue, setInputValue] = useState('');
-  const [gameName, setGameName] = useState('');
-  const [gameData, setGameData] = useState<filter_game>();
-  const [genre, setGenre] = useState<string>('');
-  const [searchParam, setSearchParam] = useState<string[]>([]);
+interface Schedule {
+  users: string[];
+  creatorUserId: string;
+  date: string;
+  duration: string;
+  gameId: string;
+}
 
-  useEffect(() => {
-    fetchGame();
-    return () => {
-      // Any cleanup code
-    };
-  }, []);
-  const fetchGame = async (): Promise<void> => {
-    try {
-      setGenre(arrayToString(searchParam));
-      if (searchParam.length === 0 || (searchParam.length === 1 && searchParam[0] === '')) {
-        const tempGameData: filter_game | undefined = await getGameWithFilter(
-          `&search_precise=true&ordering=-rating&search={name=${gameName}}`,
-        );
-        setGameData(tempGameData);
-      } else {
-        const tempGameData: filter_game | undefined = await getGameWithFilter(
-          `&genres=${genre}&tags=${genre}&ordering=-rating&search={name=${gameName}}`,
-        );
-        setGameData(tempGameData);
-      }
-      if (gameData !== undefined) {
-        setGame(gameData.results);
-      }
-    } catch (error) {
-      console.error('Error fetching game:', error);
+export default function GamesScreen(): React.ReactNode {
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState<string>('');
+  const [show, setShow] = useState(false);
+  const [Duration, setDuration] = useState('');
+  const [scheduleData, setScheduleData] = useState<Schedule>();
+  const { user, isLoaded } = useUser();
+  const [createScheduleMutation] = useCreateScheduleMutation();
+
+  if (!isLoaded) {
+    return <Text>Loading...</Text>;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, react-hooks/rules-of-hooks
+  const gameId = useGameIdStore((state) => state.selectedGameId);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const userArray = useUserStore((state) => state.selectedUsernames);
+  const onChange = (event, selectedDate): void => {
+    const currentDate: Date = selectedDate;
+    setShow(false);
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode): void => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = (): void => {
+    showMode('date');
+  };
+
+  const showTimepicker = (): void => {
+    showMode('time');
+  };
+
+  const handleCreateScheduleButtonPress = (): void => {
+    SendSchedule();
+  };
+
+  const SendSchedule = async (): Promise<void> => {
+    if (Duration && user) {
+      const schedule: Schedule = {
+        users: userArray,
+        creatorUserId: String(user.primaryEmailAddress),
+        date: String(date),
+        duration: Duration,
+        gameId: String(gameId.id),
+      };
+      console.log(schedule);
+      createScheduleMutation({
+        variables: {
+          input: schedule,
+        },
+      });
+    } else {
+      console.error('insufficient information');
     }
-  };
-  const arrayToString = (arr: string[]): string => {
-    return arr.join(',');
-  };
-  const handleAddWord = (): void => {
-    if (inputValue !== '') {
-      setSearchParam((searchParam) => [...searchParam, inputValue]);
-      setInputValue('');
-    }
-    fetchGame();
-  };
-  const handleItemRemoval = (value: string): void => {
-    setSearchParam(searchParam.filter((item) => item !== value));
-  };
-  const handleSearch = (): void => {
-    fetchGame();
   };
   return (
-    <View style={{ flex: 1, paddingTop: StatusBar.currentHeight, backgroundColor: '#3A3C42' }}>
-      <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row' }}>
-          <TextInput
-            onChangeText={setGameName}
-            value={gameName}
-            placeholder="game Name"
-            style={{
-              height: 40,
-              borderWidth: 1,
-              borderColor: '#9BA8A8',
-              borderRadius: 5,
-              flex: 1,
-              padding: 8,
-            }}
-          />
-          <TouchableHighlight onPress={handleSearch}>
-            <View style={{ height: 40, width: 40, justifyContent: 'center', alignItems: 'center' }}>
-              <AntDesign name="pluscircleo" size={24} color="black" />
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <TextInput
-            onChangeText={setInputValue}
-            value={inputValue}
-            placeholder="Tags..."
-            style={{
-              height: 40,
-              borderWidth: 1,
-              borderColor: '#9BA8A8',
-              borderRadius: 5,
-              flex: 1,
-              padding: 8,
-            }}
-          />
-          <TouchableHighlight onPress={handleAddWord}>
-            <View style={{ height: 40, width: 40, justifyContent: 'center', alignItems: 'center' }}>
-              <AntDesign name="pluscircleo" size={24} color="black" />
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View>
-          <FlatList
-            horizontal
-            style={{ height: 100, width: '100%' }}
-            data={searchParam}
-            renderItem={({ item }) => (
-              <TouchableWithoutFeedback onPress={() => handleItemRemoval(item)}>
-                <View
-                  style={{
-                    width: 80,
-                    height: 30,
-                    borderWidth: 2,
-                    borderRadius: 20,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text>{item}</Text>
-                </View>
-              </TouchableWithoutFeedback>
-            )}
-          />
-        </View>
-        <FlatList
-          style={{ flex: 1, gap: 4 }}
-          data={game}
-          renderItem={({ item }) => (
-            <Link
-              href={`/(app)/(stacks)/CreateSchedule/${item.id}`}
-              style={{ height: 60, marginHorizontal: 4, backgroundColor: '#333333' }}>
-              <ImageBackground
-                source={{ uri: `${item.background_image}` }}
-                resizeMethod="resize"
-                style={{ width: 150, height: 60 }}
-              />
-              <View
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000',
+      }}>
+      <View
+        style={{
+          borderWidth: 2,
+          borderColor: '#ffe',
+          backgroundColor: '#222',
+          borderRadius: 10,
+          padding: 10,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: '#9ff', marginVertical: 10 }}>{String(date)}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableWithoutFeedback onPress={showDatepicker}>
+              <Text
                 style={{
-                  width: 34,
-                  height: 24,
-                  backgroundColor: '#06C149',
-                  borderRadius: 6,
-                  alignItems: 'center',
+                  color: '#ff0',
+                  borderWidth: 2,
+                  borderColor: '#ffa',
+                  paddingHorizontal: 5,
+                  textAlign: 'center',
+                  marginRight: 5,
+                  borderRadius: 5,
                 }}>
-                <Text>{item.rating}</Text>
-              </View>
-            </Link>
-          )}
+                Select date
+              </Text>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={showTimepicker}>
+              <Text
+                style={{
+                  color: '#ff0',
+                  borderWidth: 2,
+                  borderColor: '#ffa',
+                  paddingHorizontal: 5,
+                  textAlign: 'center',
+                  marginLeft: 5,
+                  borderRadius: 5,
+                }}>
+                Select Time
+              </Text>
+            </TouchableWithoutFeedback>
+          </View>
+        </View>
+        <Text
+          style={{
+            color: '#9ff',
+            textAlign: 'center',
+            marginVertical: 10,
+            width: 355,
+          }}>
+          How Long Will You Play for?
+        </Text>
+        <TextInput
+          onChangeText={setDuration}
+          value={Duration}
+          placeholder="Tags..."
+          style={{
+            height: 40,
+            width: 365,
+            borderWidth: 1,
+            borderColor: '#ffa',
+            borderRadius: 5,
+            padding: 8,
+            color: '#fff',
+            marginBottom: 10,
+          }}
         />
+        <UserSearchScreen />
+        <SearchScreen />
+        <TouchableHighlight
+          style={{
+            height: 45,
+            width: 378,
+            borderWidth: 1,
+            borderColor: '#ffa',
+            padding: 8,
+            backgroundColor: '#ffa',
+            borderRadius: 5,
+            marginTop: 10,
+          }}
+          onPress={handleCreateScheduleButtonPress}>
+          <Text style={{ color: '#000', textAlign: 'center' }}>Create Schedule?</Text>
+        </TouchableHighlight>
       </View>
+
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          is24Hour
+          mode={mode}
+          onChange={onChange}
+        />
+      )}
     </View>
   );
 }

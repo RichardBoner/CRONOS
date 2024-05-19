@@ -3,20 +3,20 @@ import { create } from 'zustand';
 import { Game } from '@/graphql/generated';
 
 interface UserState {
-  selectedUsernames: { email: string }[];
+  selectedUsernames: string[];
   addSelectedUsername: (email: string) => void;
   removeSelectedUsername: (email: string) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
-  selectedUsernames: [],
+  selectedUsernames: [''],
   addSelectedUsername: (email) =>
     set((state) => ({
-      selectedUsernames: [...state.selectedUsernames, { email }],
+      selectedUsernames: [...state.selectedUsernames, email],
     })),
   removeSelectedUsername: (email) =>
     set((state) => ({
-      selectedUsernames: state.selectedUsernames.filter((user) => user.email !== email),
+      selectedUsernames: state.selectedUsernames.filter((user) => user !== email),
     })),
 }));
 interface GameState {
