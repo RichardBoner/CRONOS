@@ -1,5 +1,5 @@
 import { AntDesign } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Text,
   TextInput,
@@ -20,7 +20,6 @@ export default function SearchScreen(): React.ReactNode {
   const [selectingGame, setSelectingGame] = useState<boolean>(false);
   const [selectedGame, setSelectedGame] = useState<Game>();
   const updateSelectedGameId = useGameIdStore((state) => state.setSelectedGameId);
-  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const [LazyGameQuery, { data, loading, error }] = useGetGamesLazyQuery();
 
   const fetchGame = async (): Promise<void> => {
@@ -31,20 +30,16 @@ export default function SearchScreen(): React.ReactNode {
         },
       });
       if (error) console.error(error);
-      waitUntilLoadingIsFalse();
     } catch (error) {
       console.error('Error fetching game:', error);
     }
   };
-  const waitUntilLoadingIsFalse = async (): Promise<void> => {
-    if (loading) {
-      setTimeout(waitUntilLoadingIsFalse, 100); // Check again after 100 milliseconds
-    } else {
-      // Once loading is false, set the game data
+  useEffect(() => {
+    const getUserSchedules = async (): Promise<void> => {
       setGameData(data?.getGames);
-      setUpdateFlag((prevFlag) => !prevFlag);
-    }
-  };
+    };
+    getUserSchedules();
+  }, [loading]);
   const handleSearch = (): void => {
     fetchGame();
   };
@@ -92,7 +87,6 @@ export default function SearchScreen(): React.ReactNode {
         <FlatList
           style={{ flex: 1, gap: 4 }}
           data={gameData}
-          extraData={updateFlag}
           renderItem={({ item }) => (
             <TouchableHighlight
               onPress={() => handleSelectGame(item)}

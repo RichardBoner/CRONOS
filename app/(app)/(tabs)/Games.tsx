@@ -11,6 +11,7 @@ import { useGameIdStore, useUserStore } from '@/hooks/ZustandStore';
 interface Schedule {
   users: string[];
   creatorUserId: string;
+  createdDate: string;
   date: string;
   duration: string;
   gameId: string;
@@ -21,7 +22,6 @@ export default function GamesScreen(): React.ReactNode {
   const [mode, setMode] = useState<string>('');
   const [show, setShow] = useState(false);
   const [Duration, setDuration] = useState('');
-  const [scheduleData, setScheduleData] = useState<Schedule>();
   const { user, isLoaded } = useUser();
   const [createScheduleMutation] = useCreateScheduleMutation();
 
@@ -60,6 +60,7 @@ export default function GamesScreen(): React.ReactNode {
       const schedule: Schedule = {
         users: userArray,
         creatorUserId: String(user.primaryEmailAddress),
+        createdDate: String(new Date()),
         date: String(date),
         duration: Duration,
         gameId: String(gameId.id),

@@ -1,5 +1,4 @@
 import { useUser } from '@clerk/clerk-expo';
-import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableWithoutFeedback } from 'react-native';
 
@@ -21,21 +20,19 @@ export default function HomeScreen(): React.ReactNode {
             },
           });
           if (error) console.error(error);
-          waitUntilLoadingIsFalse();
         } catch (error) {
           console.error('Error fetching game:', error);
         }
     };
     getUserSchedules();
   }, []);
-
-  const waitUntilLoadingIsFalse = async (): Promise<void> => {
-    if (loading && !data) {
-      return <Text>Loading...</Text>;
-    } else {
+  useEffect(() => {
+    const getUserSchedules = async (): Promise<void> => {
       setScheduleArray(data?.getScheduleById);
-    }
-  };
+    };
+    getUserSchedules();
+  }, [loading]);
+
   return (
     <View style={{ flex: 1, backgroundColor: '#000000' }}>
       <View
@@ -67,21 +64,16 @@ export default function HomeScreen(): React.ReactNode {
                   paddingLeft: 13,
                 }}>
                 <Text style={{ color: '#a7a6a5' }}>{item.gameId}</Text>
-                <Text>{item.date}</Text>
+                <Text style={{ color: '#a7a6a5' }}> {item.id}</Text>
                 <FlatList
                   style={{ flexDirection: 'row' }}
                   data={item.users}
                   renderItem={({ item }) => (
                     <View>
-                      <Text>{item}</Text>
+                      <Text style={{ color: '#fff' }}>{item}</Text>
                     </View>
                   )}
                 />
-                <Link
-                  style={{ flex: 1, borderStartColor: '#fff', height: 10 }}
-                  href="/(app)/(stacks)/CreateSchedule/1">
-                  CreateScheduleTest
-                </Link>
               </View>
             </View>
           </TouchableWithoutFeedback>
